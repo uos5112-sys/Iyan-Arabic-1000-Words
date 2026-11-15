@@ -1,0 +1,1626 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>암미야 1000 — 이집트 방언 단어 게임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Naskh+Arabic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e7eeec; --surface:#fbfcfb; --surface2:#f1f5f4; --ink:#14234a; --muted:#5b6782; --line:#cfdbd8;
+  --gold:#b8861c; --gold-soft:#f5e8c4; --teal:#1d827d; --teal-soft:#d9efed;
+  --good:#1f7a4a; --good-soft:#dcf1e4; --bad:#b03d2a; --bad-soft:#f7e0da;
+  --shadow:0 1px 2px rgba(20,35,74,.06),0 8px 24px rgba(20,35,74,.08);
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1830; --surface:#152346; --surface2:#1b2b54; --ink:#efe8d6; --muted:#a3adc6; --line:#2a3c6b;
+    --gold:#e6ba50; --gold-soft:#3a3320; --teal:#52c4bb; --teal-soft:#173e45;
+    --good:#5ccb8b; --good-soft:#17392a; --bad:#ec806b; --bad-soft:#40211c;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1830; --surface:#152346; --surface2:#1b2b54; --ink:#efe8d6; --muted:#a3adc6; --line:#2a3c6b;
+  --gold:#e6ba50; --gold-soft:#3a3320; --teal:#52c4bb; --teal-soft:#173e45;
+  --good:#5ccb8b; --good-soft:#17392a; --bad:#ec806b; --bad-soft:#40211c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.ar{font-family:"Noto Naskh Arabic","Geeza Pro","Damascus","Arial",serif;direction:rtl;unicode-bidi:isolate;font-weight:700}
+.serif{font-family:"Gowun Batang",Georgia,serif}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 56px}
+
+/* hero */
+.hero{padding:18px 0 8px}
+.hero h1{font-size:clamp(34px,8vw,48px);line-height:1.1;margin:0;letter-spacing:-.01em}
+.hero h1 .ar{color:var(--gold);font-size:.8em;margin-inline-start:10px}
+.hero p{margin:8px 0 0;color:var(--muted);max-width:34em}
+.meter{display:flex;gap:20px;flex-wrap:wrap;margin:18px 0 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.meter div{display:flex;align-items:baseline;gap:6px}
+.meter b{font-size:22px;font-family:"Gowun Batang",Georgia,serif}
+.meter span{color:var(--muted);font-size:14px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+.btn{border:1.5px solid var(--line);background:var(--surface);padding:11px 16px;border-radius:12px;font-weight:600;transition:transform .08s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.gold{background:var(--gold);color:#1b1503;border-color:var(--gold)}
+.btn:disabled{opacity:.45}
+
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:26px 0 6px;background:var(--surface2);padding:5px;border-radius:14px}
+@media (min-width:640px){.tabs{grid-template-columns:repeat(10,1fr)}}
+.tab.full small{color:var(--gold)}
+.dayinfo{margin:0 0 12px;color:var(--muted);font-size:13px}
+.tab{border:0;background:transparent;padding:8px 2px;font-size:14px;border-radius:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.tab small{font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
+.tab.on{background:var(--surface);box-shadow:var(--shadow)}
+
+/* unit list */
+.units{display:flex;flex-direction:column;gap:10px}
+.unit{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;text-align:start;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.unit:hover{border-color:var(--teal)}
+.u-no{grid-row:span 2;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--teal-soft);color:var(--teal)}
+.u-no.done{background:var(--gold);color:#1b1503}
+.u-title{font-size:18px;font-weight:700}
+.u-sub{color:var(--muted);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.u-sub .ar{font-size:16px;color:var(--ink);font-weight:500}
+.u-stars{grid-row:span 2;text-align:end;font-size:13px;color:var(--muted);white-space:nowrap}
+.u-stars b{display:block;color:var(--gold);font-size:17px}
+.dots{display:flex;gap:3px;justify-content:flex-end;margin-top:4px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dots i.d1{background:var(--teal)} .dots i.d2{background:var(--gold)} .dots i.d3{background:var(--good)}
+
+/* unit screen */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.back{border:0;background:transparent;color:var(--muted);font-weight:600;padding:8px 2px}
+.unit-head h2{font-size:28px;margin:4px 0 2px;line-height:1.2}
+.unit-head p{margin:0;color:var(--muted)}
+.path{list-style:none;margin:22px 0 0;padding:0;position:relative}
+.path::before{content:"";position:absolute;inset-inline-start:23px;top:24px;bottom:24px;width:2px;background:var(--line)}
+.stage{position:relative;display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center;width:100%;text-align:start;background:transparent;border:0;padding:10px 0}
+.stage .s-num{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--surface);border:2px solid var(--teal);z-index:1}
+.stage.cleared .s-num{border-color:var(--gold);background:var(--gold-soft)}
+.stage.locked .s-num{border-color:var(--line);filter:grayscale(1);opacity:.6}
+.stage .s-txt b{display:block;font-size:17px}
+.stage .s-txt small{color:var(--muted);font-size:13px}
+.stage.locked .s-txt{opacity:.55}
+.stage .s-st{color:var(--gold);letter-spacing:1px;font-size:15px}
+.stage:not(:disabled):hover .s-num{transform:scale(1.06)}
+.wordlist{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 14px}
+.wordlist summary{padding:12px 0;font-weight:700;cursor:pointer}
+.wr{display:grid;grid-template-columns:32px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.wr-n{color:var(--muted);font-size:13px}
+.wr-ar{font-size:24px;line-height:1.6}
+.wr-m{display:block;font-weight:600}
+.wr-p{display:block;color:var(--muted);font-size:13px}
+.say{border:1px solid var(--line);background:var(--surface2);border-radius:50%;width:38px;height:38px;font-size:16px;flex:none}
+
+/* play */
+.prog{flex:1;height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--teal);transition:width .3s}
+.prog.time i{background:var(--gold);transition:width .1s linear}
+.count{font-size:14px;color:var(--muted);min-width:52px;text-align:end;font-variant-numeric:tabular-nums}
+.ptitle{font-family:"Gowun Batang",Georgia,serif;font-weight:700;font-size:18px;margin:6px 0 16px}
+
+/* cartouche — the signature element */
+.cartouche{position:relative;margin:0 auto;max-width:520px;border:3px solid var(--gold);border-radius:999px;padding:22px 40px;background:var(--surface);text-align:center;box-shadow:var(--shadow)}
+.cartouche::after{content:"";position:absolute;inset-inline-end:-14px;top:18%;bottom:18%;width:6px;border-radius:3px;background:var(--gold)}
+.cartouche .ar{font-size:clamp(40px,11vw,64px);line-height:1.5;display:block}
+.cartouche .ko{font-family:"Gowun Batang",Georgia,serif;font-size:clamp(24px,6vw,32px);font-weight:700;display:block;line-height:1.35}
+.cartouche .en{display:block;color:var(--muted);font-size:14px;margin-top:4px}
+.qlabel{text-align:center;color:var(--muted);margin:0 0 12px;font-size:15px}
+.sayrow{display:flex;justify-content:center;margin:12px 0 0}
+
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+@media (max-width:460px){.opts{grid-template-columns:1fr}}
+.opt{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px 12px;min-height:62px;text-align:center;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative}
+.opt .k{position:absolute;inset-inline-start:10px;top:8px;font-size:11px;color:var(--muted);font-weight:400}
+.opt .ar{font-size:30px;line-height:1.5}
+.opt small{color:var(--muted);font-weight:400;font-size:13px}
+.opt:not(:disabled):hover{border-color:var(--teal)}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+
+.reveal{margin-top:16px;border-radius:14px;padding:12px 16px;border:1.5px solid}
+.reveal.good{border-color:var(--good);background:var(--good-soft)}
+.reveal.bad{border-color:var(--bad);background:var(--bad-soft)}
+.reveal .rv-h{font-weight:700}
+.reveal .rv-w{margin-top:4px}
+.reveal .rv-w .ar{font-size:22px;margin-inline-end:6px}
+.reveal .rv-ex{color:var(--muted);font-size:14px;margin-top:4px}
+.nextrow{display:flex;justify-content:flex-end;margin-top:12px}
+
+/* flashcard */
+.flash{perspective:1200px;max-width:520px;margin:0 auto;height:340px;cursor:pointer}
+.flash-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flash.on .flash-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:28px;background:var(--surface);border:3px solid var(--gold);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;overflow:auto}
+.face.back{transform:rotateY(180deg);border-color:var(--teal)}
+.face .ar.big{font-size:clamp(48px,13vw,76px);line-height:1.5}
+.face .ar.mid{font-size:34px;line-height:1.5}
+.face .hint{color:var(--muted);font-size:13px;margin-top:10px}
+.face .pron{font-weight:700;font-size:20px}
+.face .pron span{display:block;font-weight:400;color:var(--muted);font-size:16px}
+.face .mean{font-family:"Gowun Batang",Georgia,serif;font-size:24px;font-weight:700;margin-top:8px}
+.face .en{color:var(--muted);font-size:14px}
+.face .ex{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-size:14px;width:100%}
+.face .ex-r{font-weight:600}
+.face .ex-k{color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px;margin:16px auto 0}
+.kbd{text-align:center;color:var(--muted);font-size:12px;margin-top:12px}
+@media (hover:none){.kbd{display:none}}
+
+/* match */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.mcol{display:flex;flex-direction:column;gap:10px}
+.mi{background:var(--surface);border:2px solid var(--line);border-radius:14px;min-height:64px;padding:8px 10px;font-weight:600;transition:opacity .25s,transform .25s}
+.mi .ar{font-size:26px;line-height:1.5}
+.mi.sel{border-color:var(--teal);background:var(--teal-soft)}
+.mi.ok{border-color:var(--good);background:var(--good-soft);opacity:.35;transform:scale(.96)}
+.mi.no{border-color:var(--bad);background:var(--bad-soft);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* result */
+.result{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px 20px;box-shadow:var(--shadow)}
+.r-title{font-size:24px;font-weight:700;margin:0}
+.r-stars{font-size:46px;letter-spacing:6px;margin:10px 0 0;color:var(--line)}
+.r-stars .on{color:var(--gold)}
+.r-score{font-size:18px;font-weight:700;margin-top:6px}
+.r-msg{color:var(--muted);margin:6px 0 18px}
+.r-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.missed{margin-top:22px;text-align:start;border-top:1px solid var(--line)}
+.missed h4{margin:14px 0 4px;font-size:15px}
+
+.voicebox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:16px;color:var(--muted)}
+.voicebox h3{margin:0 0 6px;font-size:17px;color:var(--ink)}
+.vs{margin:0 0 10px;color:var(--ink);font-weight:600}
+.vs.ok{color:var(--good)}
+.vrow{display:flex;gap:8px;align-items:center;margin-bottom:10px;color:var(--ink)}
+.vrow select{flex:1;min-width:0;padding:9px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);font:inherit}
+.vrow input{flex:1}
+.vnote{margin:0}
+footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+footer p{margin:0 0 8px}
+.linkbtn{border:0;background:transparent;color:var(--bad);text-decoration:underline;padding:0;font-size:13px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<script>
+const SECTIONS={
+ 1:["첫인사와 맞장구","호칭과 의사소통","식당·카페와 쇼핑","길 찾기와 택시","시간·크기·감정"],
+ 2:["핵심 일상 동사","이집트 숫자 1~10","장보기와 식재료","집·숙소 생활","대화를 잇는 부사·관용구"],
+ 3:["의문사와 상황 표현","사람·가족 호칭","시간과 일과","일상 동작 동사","감각·상태 형용사"],
+ 4:["교통과 위치 전치사","동네 편의시설","주방과 식기","집안일 동사","평가 형용사"],
+ 5:["신체 부위 및 건강·증상 표현", "옷·의류 및 착용 필수 명사", "일상 쇼핑·색상 및 모양 표현", "일상 인지·심리 및 소통 동사", "날씨·자연 및 일상 환경 표현"],
+ 6:["집안 가구 및 가전제품", "욕실 및 세면·위생 용품", "일상 제3의 필수 동작 동사", "음식 맛과 조리 상태 형용사", "일상 수량·빈도 및 정도 부사"],
+ 7:["업무·사무실 및 학업·공부 표현", "외식·디저트 및 길거리 간식", "일상 제4의 필수 동작 동사", "감정과 심리 상태 형용사", "이집트 일상 필수 관용 표현 및 문화 축약어"],
+ 8:["시장·식료품과 청과물", "요일과 주간 일정 표현", "일상 제5의 필수 동작 동사", "외모·체형 및 성향 묘사 형용사", "은행·결제 및 금융 실생활 표현"],
+ 9:["관광·문화유산 및 피라미드·유적지 표현", "우버·배달 및 로컬 길안내 심화 표현", "일상 제6의 필수 동작 동사", "긴급 상황 및 안전·주의 표현", "이집트 일상 예의와 식사·방문 관용 표현"],
+ 10:["일상 속 외래어의 보물창고", "자동차·정비 및 주유소 필수 표현", "일상 제7의 필수 동작 동사", "통신·디지털 및 스마트폰 일상 표현", "이집트 일상 필수 감탄사 및 리액션 표현"],
+ 11:["일상 음료·카페 및 신선 과일주스", "우체국·택배 및 서류·행정 표현", "일상 제8의 필수 동작 동사", "건축·인테리어 및 집안 수리 표현", "이집트 일상 생활용품 및 소지품"],
+ 12:["일상 동물 및 반려동물·가축 표현", "향신료 및 양념·식재료 심화", "일상 제9의 필수 동작 동사", "호텔·숙박 및 여행 편의 표현", "문맥을 잇는 접속사 및 대화 연결 표현"],
+ 13:["신체 외모·얼굴 부위 및 이발소·미용실 표현", "옷장 부속·액세서리 및 가방 속 패션 소품", "일상 제10의 필수 동작 동사", "쇼핑 품질·상태 및 상업 거래 표현", "이집트 일상 속 깊은 문화적 기원과 축복 관용구"],
+ 14:["일상 약국·상비약 및 건강 보조제 심화", "주거 계약 및 부동산·월세 필수 어휘", "일상 제11의 필수 동작 동사", "사물의 재질·소재 및 물리적 특성", "이집트 일상 필수 비유와 속담형 관용구"],
+ 15:["일상 가전·조리기구 및 주방 소품 심화", "공항·비행기 및 출입국 여행 표현", "일상 제12의 필수 동작 동사", "교육·학습 기관 및 학용품·문구 심화", "이집트 일상 필수 비즈니스·약속 매너 관용구"],
+ 16:["정원·식물 및 베란다 원예", "일상 날씨·계절 및 기후 현상", "일상 제13의 필수 동작 동사", "오락·취미 및 문화생활", "이집트 일상 필수 맞장구·공감 관용구"],
+ 17:["도시 인프라 및 대중교통 심화", "일상 가구 부속 및 침구·수예", "일상 제14의 필수 동작 동사", "건강 보조·약국용품 및 위생 소품 심화", "이집트 일상 필수 식사 및 호의 화답 관용구"],
+ 18:["수리·정비 및 공구 소품 심화", "일상 질병 증상 및 통증 묘사", "일상 제15의 필수 동작 동사", "우체국 및 택배·물류 배송", "이집트 일상 필수 지혜 및 긍정 마인드 관용구"],
+ 19:["서류 양식 및 공공 행정·신분 증명 심화", "일상 식기 및 유리·그릇 소품 심화", "일상 제16의 필수 동작 동사", "보석·귀금속 및 액세서리 심화", "이집트 일상 필수 기원 및 축복 관용구"],
+ 20:["카페·차 문화 및 이집트 전통 디저트", "사진·미디어 및 SNS 일상 소통", "일상 제17의 필수 동작 동사", "대인관계·모임 및 호칭 심화", "1,000단어 달성 기념! 이집트 일상 감동·칭찬·격려 관용구"]
+};
+// ar | 발음(영문) | 발음(한글) | 뜻 | English | 예문 | 예문 뜻
+const RAW={
+1:`
+أَهْلًا|AH-lan|아흘란|안녕하세요 / 환영합니다|Hello, welcome|AH-lan beek|반갑습니다 (남성에게)
+إِزَّيَّك|iz-ZAY-yak|이자이야크|잘 지내? (남성에게)|How are you? (m.)|iz-ZAY-yak in-na-HAR-da?|오늘 어떻게 지내?
+إِزَّيِّك|iz-ZAY-yik|이자이익|잘 지내? (여성에게)|How are you? (f.)|iz-ZAY-yik ya SA-ra?|사라야, 잘 지내?
+كُوَيِّس|ku-WAY-yis|쿠와이이스|좋은, 잘 지내는|Good, fine|A-na ku-WAY-yis il-ham-du lil-LAAH|덕분에 아주 잘 지내요
+تَمَام|ta-MAAM|타맘|좋아, 완벽해, 알겠어|OK, perfect|KUL-lu ta-MAAM|모든 게 다 순조로워
+شُكْرًا|SHUK-ran|슈크란|고맙습니다|Thank you|SHUK-ran GID-dan|정말 대단히 고맙습니다
+العَفْو|il-'AFW|일아프우|천만에요, 별말씀을요|You're welcome|il-'AFW ya FAN-dim|별말씀을요, 손님
+أَيْوَه|AY-wa|아이와|네, 맞아요|Yes|AY-wa, maz-BOOT|네, 정확히 맞습니다
+لَأْ|LA'|라|아니요|No|LA', SHUK-ran|아니요, 괜찮습니다
+مَعْلِشّ|ma'-LESH|마레쉬|괜찮아, 미안해, 어쩔 수 없지|Never mind, sorry|ma'-LESH, ma-FEESH mush-KI-la|괜찮아요, 아무 문제 없어요
+أَنَا|A-na|아나|나, 저|I, me|A-na min KOR-ya|저는 한국에서 왔습니다
+إِنْتَ|IN-ta|인타|너, 당신 (남성)|You (m.)|IN-ta SA-kin feen?|당신은 어디에 사시나요?
+إِنْتِي|IN-ti|인티|너, 당신 (여성)|You (f.)|IN-ti GAY-ya IM-ta?|너 언제 오니?
+حَضْرِتَك|had-RI-tak|하드리타크|선생님, 손님 (남성 존칭)|Sir (polite "you")|had-RI-tak 'AA-yiz eh?|손님, 무엇을 도와드릴까요?
+عَايِز|'AA-yiz|아이즈|원하다 (남성 주어)|Want (m.)|A-na 'AA-yiz MAY-ya|저는 물을 마시고 싶어요
+عَايْزَة|'AAY-za|아이자|원하다 (여성 주어)|Want (f.)|A-na 'AAY-za a-ROOH|저는 가고 싶어요 (여성 화자)
+عَارِف|'AA-rif|아리프|알고 있다|Know|A-na mish 'AA-rif|저는 잘 모르겠습니다
+فَاهِم|FAA-him|파힘|이해하고 있다|Understand|IN-ta FAA-him 'AS-di?|제 말 뜻을 이해하셨나요?
+مُمْكِن|MUM-kin|뭄킨|가능한, ~해도 될까요?|Possible, may I…?|MUM-kin su-'AAL?|질문 하나 드려도 될까요?
+لَوْ سَمَحْت|law sa-MAHT|라우 사마흐트|실례합니다, 부탁합니다|Excuse me, please|law sa-MAHT, il-hi-SAAB|실례합니다, 계산서 좀 주세요
+مَيَّة|MAY-ya|마이야|물|Water|MAY-ya SA'-'a law sa-MAHT|찬물 한 병 부탁합니다
+شَاي|SHAAY|샤이|홍차, 차|Tea|SHAAY bin-na'-NAA'|민트를 넣은 홍차 한 잔
+قَهْوَة|'AH-wa|아흐와|커피, 전통 찻집|Coffee, café|'AH-wa SAA-da|설탕을 넣지 않은 블랙커피
+عِيش|'EESH|이쉬|빵|Bread|il-'EESH da TAA-za|이 빵은 갓 구워 신선하네요
+أَكْل|AKL|아클|음식, 식사|Food|il-AKL il-MAS-ri hilw|이집트 음식은 정말 맛있어요
+حِسَاب|hi-SAAB|히삽|계산서, 청구서|Bill, check|il-hi-SAAB kaam?|계산 금액이 총 얼마인가요?
+بِكَام|bi-KAAM|비캄|얼마예요?|How much?|bi-KAAM da law sa-MAHT?|실례지만 이거 얼마인가요?
+فُلُوس|fu-LOOS|풀루스|돈, 현금|Money|ma-'AA-ya fu-LOOS kaash|저에게 현금이 있습니다
+غَالِي|GHAA-li|갈리|비싼|Expensive|da GHAA-li A-wi|이건 가격이 너무 비싸요
+رِخِيص|ri-KHEES|리키스|싼, 저렴한|Cheap|is-SOO' da ri-KHEES|이 시장은 물가가 저렴해요
+فِين|FEEN|핀|어디에?|Where?|il-ham-MAAM feen?|화장실이 어디에 있나요?
+هِنَا|HI-na|히나|여기|Here|U-'af HI-na law sa-MAHT|여기 세워 주세요
+هِنَاك|hi-NAAK|히나크|저기, 거기|There|il-ma-HAT-ta hi-NAAK|정류장은 저쪽에 있습니다
+يِمِين|yi-MEEN|이민|오른쪽|Right|khush yi-MEEN|오른쪽으로 들어가세요 (우회전)
+شِمَال|shi-MAAL|쉬말|왼쪽|Left|khush shi-MAAL ba'd il-i-SHAA-ra|신호등 지나서 좌회전하세요
+عَلَى طُول|'a-la TOOL|알라 툴|쭉 직진, 곧장|Straight ahead|IM-shi 'a-la TOOL|이 길로 쭉 직진하세요
+عَرَبِيَّة|'a-ra-BEY-ya|아라비야|자동차|Car|il-'a-ra-BEY-ya WA-sa-lit|호출한 차량이 도착했습니다
+شَارِع|SHAA-ri'|샤리으|거리, 큰길|Street|ish-SHAA-ri' ZAH-ma|도로에 차가 많이 막히네요
+بِيت|BEET|비트|집, 가정|House, home|A-na RAA-yih il-BEET|저는 지금 집에 가는 길입니다
+مَحَلّ|ma-HALL|마할|가게, 상점|Shop|il-ma-HALL 'AA-fil dil-WA'-ti|그 가게는 지금 문을 닫았어요
+النَّهَارْدَه|in-na-HAR-da|인나하르다|오늘|Today|in-na-HAR-da il-GAWW hilw|오늘은 날씨가 참 좋네요
+بُكْرَه|BUK-ra|부크라|내일|Tomorrow|a-SHOO-fak BUK-ra|우리 내일 만나요
+إِمْبَارِح|im-BAA-rih|임바리흐|어제|Yesterday|ruht il-GEE-za im-BAA-rih|어제 기자(Giza)에 다녀왔어요
+دِلْوَقْتِي|dil-WA'-ti|딜와으티|지금, 현재|Now|A-na gayy dil-WA'-ti|저 지금 바로 가는 중이에요
+بَعْدِين|ba'-DEEN|바으딘|나중에, 이따가|Later|nit-KAL-lim ba'-DEEN|우리 이따가 이야기해요
+كِبِير|ki-BEER|키비르|큰, 나이가 많은|Big, old (age)|il-BEET da ki-BEER|이 집은 규모가 크네요
+صُغَيَّر|su-GHAY-yar|수가이야르|작은, 어린|Small, young|koo-BAA-ya su-GHAY-ya-ra|작은 컵으로 하나 주세요
+حِلْو|HILW|힐우|좋은, 예쁜, 맛있는|Nice, pretty, sweet|il-FIK-ra di HIL-wa|그 생각 정말 좋은데요
+تَعْبَان|ta'-BAAN|타으반|피곤한, 몸이 아픈|Tired, unwell|A-na ta'-BAAN shu-WAY-ya|제가 오늘 조금 피곤해요
+مَبْسُوط|mab-SOOT|맙수트|기쁜, 즐거운|Happy, pleased|A-na mab-SOOT HI-na|여기서 지내는 것이 아주 즐거워요`,
+2:`
+رَاح / يِرُوح|raah / yi-ROOH|라흐 / 이루흐|가다|Go|A-na RAA-yih is-SOO'|저는 지금 시장에 가는 길이에요
+جِه / يِيجِي|geh / YEE-gi|게 / 이기|오다|Come|HUW-wa gayy IM-ta?|그 사람은 언제 오나요?
+أَكَل / يَاكُل|A-kal / YAA-kul|아칼 / 야쿨|먹다|Eat|kult eh in-na-HAR-da?|오늘 뭐 먹었어?
+شِرِب / يِشْرَب|SHI-rib / YISH-rab|쉬립 / 이슈랍|마시다|Drink|TISH-rab shaay WAL-la 'AH-wa?|차 마실래, 아니면 커피 마실래?
+شَاف / يِشُوف|shaaf / yi-SHOOF|샤프 / 이슈프|보다, 만나다|See, meet|shuft il-FILM da?|이 영화 본 적 있어?
+قَال / يِقُول|'aal / yi-'OOL|알 / 이울|말하다|Say|'ool li is-sa-RAA-ha|나에게 솔직하게 말해 줘
+عَمَل / يِعْمِل|'A-mal / YI'-mil|아말 / 이으밀|하다, 만들다|Do, make|bi-TI'-mil eh dil-WA'-ti?|지금 뭐 하고 있어?
+اِشْتَرَى / يِشْتِرِي|ish-TA-ra / yish-TI-ri|이슈타라 / 이슈티리|사다, 구매하다|Buy|'AA-yiz ash-TI-ri FAK-ha|과일을 좀 사고 싶어요
+اِتْكَلِّم / يِتْكَلِّم|it-KAL-lim / yit-KAL-lim|이트칼림 / 이트칼림|이야기하다, 말하다|Speak, talk|bi-tit-KAL-lim 'A-ra-bi ku-WAY-yis|아랍어를 아주 잘하시네요
+نَام / يِنَام|naam / yi-NAAM|남 / 이남|자다|Sleep|A-na 'AA-yiz a-NAAM|저는 이제 자고 싶어요
+وَاحِد|WAA-hid|와히드|1, 하나|One|WAA-hid shaay law sa-MAHT|홍차 한 잔 주세요
+اِتْنِين|it-NEEN|이트닌|2, 둘|Two|it-NEEN 'AH-wa maz-BOOT|중간 단맛 커피 두 잔이요
+تَلَاتَة|ta-LAA-ta|탈라타|3, 셋|Three|is-SAA-'a ta-LAA-ta|지금은 3시입니다
+أَرْبَعَة|ar-BA-'a|아르바아|4, 넷|Four|ar-BA-'a gi-NEEH|4파운드(EGP)입니다
+خَمْسَة|KHAM-sa|캄사|5, 다섯|Five|KHAM-sa da-'AA-yi' bass|딱 5분만요
+سِتَّة|SIT-ta|싯타|6, 여섯|Six|baas raqm SIT-ta|6번 버스
+سَبْعَة|SAB-'a|사브아|7, 일곱|Seven|SAB-'a is-SUBH|아침 7시
+تَمَانْيَة|ta-MAN-ya|타마냐|8, 여덟|Eight|is-SAA-'a ta-MAN-ya is-SUBH|오전 8시입니다
+تِسْعَة|TIS-'a|티스아|9, 아홉|Nine|TIS-'a bil-LEEL|밤 9시
+عَشَرَة|'A-sha-ra|아샤라|10, 열|Ten|'A-sha-ra gi-NEEH bass|딱 10파운드만 주세요
+لَحْمَة|LAH-ma|라흐마|고기 (주로 소·양고기)|Meat|TAA-gin LAH-ma|소고기 스튜(타긴) 요리
+فِرَاخ|fi-RAAKH|피라크|닭고기, 치킨|Chicken|fi-RAAKH mash-WEY-ya|숯불에 구운 치킨
+رُزّ|RUZZ|루즈|쌀, 밥|Rice|ruzz bish-sha'-REY-ya|샤으리야 면을 넣고 지은 이집트 쌀밥
+خُضَار|khu-DAAR|쿠다르|채소, 야채|Vegetables|SHOR-bit khu-DAAR|따뜻한 야채수프
+فَاكْهَة|FAK-ha|파크하|과일|Fruit|'a-SEER FAK-ha freesh|생과일주스
+لَبَن|LA-ban|라반|우유|Milk|shaay bi-LA-ban|우유를 넣은 밀크티
+سُكَّر|SUK-kar|숙카르|설탕|Sugar|min gheer SUK-kar|설탕 빼고 주세요
+مَلْح|MALH|말흐|소금|Salt|il-AKL 'AA-yiz malh|음식에 소금 간이 좀 더 필요해요
+فِطَار|fi-TAAR|피타르|아침 식사|Breakfast|il-fi-TAAR GAA-hiz|아침 식사가 준비되었습니다
+عَشَا|'A-sha|아샤|저녁 식사|Dinner|ha-NAA-kul eh fil-'A-sha?|우리 저녁으로 뭐 먹을까?
+أُوضَة|OO-da|우다|방|Room|il-OO-da di ni-DEE-fa|이 방은 깨끗하네요
+بَاب|BAAB|밥|문, 출입문|Door|I'-fil il-BAAB law sa-MAHT|문 좀 닫아 주세요
+مُفْتَاح|muf-TAAH|무프타흐|열쇠|Key|ni-SEET il-muf-TAAH fil-BEET|집에 열쇠를 두고 왔어요
+تَكْيِيف|tak-YEEF|타크이프|에어컨|Air conditioner|shagh-GHAL it-tak-YEEF law sa-MAHT|에어컨 좀 켜 주세요
+كَهْرَبَا|kah-RA-ba|카흐라바|전기|Electricity|il-kah-RA-ba 'A-ta-'it|전기가 나갔어요 (정전)
+نِتّ|NETT|넷|인터넷|Internet|in-NETT ba-TEE' in-na-HAR-da|오늘 인터넷이 느리네요
+مُوبَايْل|mo-BAAYL|모바일|휴대폰|Mobile phone|mo-BAAY-li FA-sal shahn|제 휴대폰 배터리가 다 닳았어요
+صَيْدَلِيَّة|say-da-LEY-ya|사이달리야|약국|Pharmacy|feeh say-da-LEY-ya 'u-ray-YI-ba?|근처에 약국이 있나요?
+مُسْتَشْفَى|mus-TASH-fa|무스타슈파|병원|Hospital|il-mus-TASH-fa 'u-RAY-yib min HI-na|병원은 여기서 가까워요
+بَنْك|BANK|방크|은행|Bank|il-BANK FAA-tih li-HADD is-SAA-'a ta-LAA-ta|은행은 3시까지 열어요
+عَشَان|'a-SHAAN|아샨|~때문에, ~하기 위해|Because, in order to|mish 'AA-dir A-gi 'a-SHAAN mash-GHOOL|바빠서 갈 수가 없어요
+بَسّ|BASS|바스|하지만, 단지, 그만!|But, only, enough!|hilw bass GHAA-li|예쁘지만 비싸네요
+لِسَّه|LIS-sa|릿사|아직, 방금|Still, not yet, just|HUW-wa LIS-sa ma-GAASH|그 사람은 아직 안 왔어요
+خَلَاص|kha-LAAS|칼라스|끝났어, 됐어, 완료!|Done, that's it|kha-LAAS, it-ta-FA'-na|좋아, 그렇게 정한 거다!
+شُوَيَّة|shu-WAY-ya|슈와이야|조금, 약간, 잠깐|A little|is-TAN-na shu-WAY-ya|잠깐만 기다려 주세요
+كِتِير|ki-TEER|키티르|많이, 많은|A lot, many|SHUK-ran ki-TEER|정말 많이 고맙습니다
+بِالرَّاحَة|bir-RAA-ha|빌라하|천천히, 살살|Slowly, gently|it-KAL-lim bir-RAA-ha law sa-MAHT|천천히 말씀해 주세요
+بِسُرْعَة|bi-SUR-'a|비수르아|빨리, 서둘러서|Quickly|ta-'AA-la bi-SUR-'a|빨리 이리로 오세요
+إِنْ شَاءَ الله|in shaa' al-LAAH|인샤알라|신의 뜻이라면, 꼭 그렇게 되길|God willing|nit-'AA-bil BUK-ra in shaa' al-LAAH|내일 꼭 만나요 (인샬라)
+الحَمْدُ لِله|il-ham-du lil-LAAH|일함두 릴라|덕분에 잘 지내요, 다행입니다|Thank God|il-ham-du lil-LAAH KUL-lu ta-MAAM|덕분에 모든 게 다 좋습니다`,
+3:`
+إِيه|eh|에|무엇|What|da eh?|이게 뭐야?
+مِين|meen|민|누구|Who|meen hi-NAAK?|저기 누구 있어요?
+لِيه|leeh|리|왜, 어째서|Why|leeh LA'?|왜 안 돼요?
+إِزَّاي|iz-ZAY|이자이|어떻게|How|iz-ZAY a-ROOH hi-NAAK?|거기 어떻게 가나요?
+إِمْتَى|IM-ta|임타|언제|When|had-RI-tak FAA-di IM-ta?|손님 언제 시간 되세요?
+كَام|kaam|캄|몇, 얼마|How much / many|is-SAA-'a kaam dil-WA'-ti?|지금 몇 시인가요?
+أَنْهُو|a-na-HOO|아나후|어느 것 (남성)|Which one|a-na-HOO WAA-hid 'AA-yiz?|어느 것을 원하세요?
+فِيه|feeh|피|있다, 존재하다|There is / are|feeh shaay?|차 있나요?
+مَافِيش|ma-FEESH|마피쉬|없다|There isn't, none|ma-FEESH fu-LOOS FAK-ka|잔돈이 없어요
+يَعْنِي|YA'-ni|야으니|즉, 말하자면|I mean, meaning|YA'-ni eh il-KIL-ma di?|이 단어는 무슨 뜻인가요?
+رَاجِل|RAA-gil|라길|남자, 성인 남성|Man|ir-RAA-gil da TAY-yib|저 남자는 참 착해요
+سِتّ|SETT|셋트|여성, 아주머니|Woman, lady|is-SETT di muh-ta-RA-ma|저 여성분은 훌륭해요
+وَلَد|WA-lad|왈라드|소년, 아이|Boy, child|il-WA-lad SHAA-tir|그 아이는 똘똘해요
+بِنْت|BENT|벤트|소녀, 딸|Girl, daughter|il-BENT su-GHAY-ya-ra|그 아이는 어려요
+صَاحِب|SAA-hib|사힙|친구, 주인|Friend, owner|da SAH-bi min masr|이쪽은 제 이집트 친구예요
+بَابَا|BA-ba|바바|아빠, 아버지|Dad|BA-ba fish-SHUGHL|아빠는 일터에 계셔요
+مَامَا|MA-ma|마마|엄마, 어머니|Mom|MA-ma fil-BEET|엄마는 집에 계셔요
+أَخ|AKH|아크|형, 오빠, 남동생|Brother|'IN-di akh ki-BEER|저에게 형이 한 명 있어요
+أُخْت|UKHT|우크트|누나, 언니, 여동생|Sister|UKH-ti SAK-na HI-na|제 여동생은 여기에 살아요
+جَار|GAAR|가르|이웃|Neighbor|GAA-ri mu-'AD-dab|제 이웃은 예의가 발라요
+سَاعَة|SAA-'a|사아|시간, 시계, 1시간|Hour, clock|ba'd SAA-'a|한 시간 후에
+دَقِيقَة|da-'EE-'a|다이아|분(分)|Minute|da-'EE-'a WAH-da law sa-MAHT|딱 1분만 기다려 주세요
+يُوم|YOM|욤|날, 하루|Day|yom sa-'EED|좋은 하루 되세요
+أُسْبُوع|us-BOO'|우스부으|주, 일주일|Week|il-us-BOO' il-GAYY|다음 주에
+شَهْر|SHAHR|샤흐르|달, 1개월|Month|ba-'AA-li shahr HI-na|여기 온 지 한 달 됐어요
+سَنَة|SA-na|사나|해, 1년|Year|kull SA-na w-IN-ta TAY-yib|새해 복 많이 받으세요 (명절 인사)
+الصُّبْح|is-SUBH|잇수브흐|아침, 오전|Morning|BASH-rab 'AH-wa is-SUBH|저는 아침에 커피를 마셔요
+الضُّهْر|id-DUHR|잇두흐르|정오, 낮|Noon|nit-'AA-bil id-DUHR|낮 정오에 만나요
+بِاللِّيل|bil-LEEL|빌릴|밤에, 야간에|At night|ish-SHAA-ri' HAA-di bil-LEEL|밤에는 거리가 조용해요
+كُلّ يُوم|kull YOM|쿨 욤|매일, 날마다|Every day|ba-ZAA-kir 'A-ra-bi kull YOM|저는 매일 아랍어를 공부해요
+فَتَح / يِفْتَح|fa-tah / yif-tah|파타흐 / 이프타흐|열다, 켜다|Open, turn on|IF-tah il-BAAB law sa-MAHT|문 좀 열어 주세요
+قَفَل / يِقْفِل|'a-fal / yi'-fil|아팔 / 이으필|닫다, 잠그다|Close, turn off|il-ma-HALL 'A-fal|가게가 문을 닫았어요
+سِمِع / يِسْمَع|si-mi' / yis-ma'|시미으 / 이스마으|듣다|Hear, listen|sa-MI'-ni ku-WAY-yis?|내 말 잘 들려요?
+سَأَل / يِسْأَل|sa-'al / yis-'al|사알 / 이스알|묻다, 질문하다|Ask|'AA-yiz as-'al 'an is-SI'R|가격을 좀 여쭤보고 싶어요
+طَلَب / يِطْلُب|ta-lab / yit-lub|탈라브 / 이틀룹|주문하다, 요청하다|Order, request|ta-LABT il-AKL kha-LAAS|음식 주문 이미 다 했어요
+دَفَع / يِدْفَع|da-fa' / yid-fa'|다파으 / 이드파으|지불하다, 돈을 내다|Pay|A-na HAD-fa' il-hi-SAAB|계산은 제가 할게요
+اِسْتَنَّى / يِسْتَنَّى|is-tan-na / yis-tan-na|이스탄나 / 이스탄나|기다리다|Wait|is-tan-NAA-ni HI-na|여기서 절 기다려 주세요
+سَافِر / يِسَافِر|saa-fir / yi-saa-fir|사피르 / 이사피르|여행하다, 떠나다|Travel|ha-SAA-fir il-is-kan-da-REY-ya|알렉산드리아로 여행 가요
+نِزِل / يِنْزِل|ni-zil / yin-zil|니질 / 인질|내리다, 나가다|Get off, go down|HAN-zil il-ma-HAT-ta il-GAY-ya|다음 정류장에서 내릴게요
+خِلِص / يِخْلَص|khi-lis / yikh-las|킬리스 / 이클라스|끝나다, 다 떨어지다|Finish, run out|il-'EESH KHI-lis|빵이 다 떨어졌어요
+جِدِيد|ga-DEED|가디드|새로운|New|'a-ra-BEY-ya ga-DEE-da|새 승용차
+قَدِيم|'a-DEEM|아딤|오래된, 낡은|Old|il-BEET da 'a-DEEM|이 집은 오래되었어요
+قُرَيِّب|'u-RAY-yib|우라이입|가까운|Near|il-MAT-haf 'u-RAY-yib|박물관이 가까워요
+بِعِيد|ba-'EED|바이드|먼, 멀리 있는|Far|il-ma-TAAR ba-'EED|공항은 멀어요
+سُخْن|SUKHN|수큰|뜨거운 (음식·음료)|Hot (food)|ish-SHAAY sukhn|차가 뜨거워요
+سَاقِع|SAA-'i'|사이으|차가운, 시원한 (음료)|Cold (drink)|'AA-yiz MAY-ya SA'-'a|시원한 물 원해요
+حَرّ|HARR|하르|(날씨가) 더운|Hot (weather)|il-GAWW harr in-na-HAR-da|오늘 날씨가 더워요
+بَرْد|BARD|바르드|(날씨가) 추운|Cold (weather)|il-GAWW bard bil-LEEL|밤에는 날씨가 쌀쌀해요
+جَعَان|ga'-'AAN|가으안|배고픈|Hungry|A-na ga'-'AAN A-wi|나 너무 배고파요
+عَطْشَان|'at-SHAAN|아트샨|목마른|Thirsty|A-na 'at-SHAAN, MUM-kin MAY-ya?|저 목마른데 물 좀 주시겠어요?`,
+4:`
+مَحَطَّة|ma-HAT-ta|마핫타|역, 정류장|Station, stop|ma-HAT-tit il-MET-ro feen?|지하철역이 어디인가요?
+مِتْرُو|MET-ro|메트로|지하철|Metro|A-na BAR-kab il-MET-ro|저는 지하철을 타요
+تَاكْسِي|TAK-si|탁시|택시|Taxi|HAA-khud TAK-si|택시를 탈게요
+كُوبْرِي|KOB-ri|코브리|다리, 교량|Bridge|IT-la' il-KOB-ri|다리 위로 올라가세요
+مِيدَان|mee-DAAN|미단|광장, 로터리|Square, roundabout|mee-DAAN it-tah-REER|타흐리르 광장
+إِشَارَة|i-SHAA-ra|이샤라|신호등, 신호|Traffic light|'IN-da il-i-SHAA-ra|신호등 앞에서
+وَرَا|WA-ra|와라|뒤에, 뒤쪽|Behind|il-'a-ra-BEY-ya wa-RAAK|차가 네 뒤에 있어
+قُدَّام|'ud-DAAM|욷담|앞에, 앞쪽|In front of|U-'af 'ud-DAAM il-ma-HALL|가게 앞에 세워 주세요
+جَنْب|GAMB|감브|옆에|Next to|SA-kin GAM-bi|내 옆집에 살아요
+بِين|BEEN|빈|사이에|Between|BEEN il-ma-HAT-ta wil-BEET|정류장과 집 사이에
+سُوبَر مَارْكِت|soo-bar MAR-kit|수바르 마르키트|슈퍼마켓|Supermarket|RAA-yih is-soo-bar MAR-kit|슈퍼마켓 가는 길이에요
+كُشْك|KOSHK|코슈크|길거리 간이매점|Kiosk|ish-TI-ri SHAA-hin min il-KOSHK|키오스크에서 충전기 사
+مَخْبَز|MAKH-baz|마크바즈|빵집|Bakery|'eesh TAA-za min il-MAKH-baz|빵집에서 갓 구운 빵
+جَامِع|GAA-mi'|가미으|모스크, 이슬람 사원|Mosque|il-GAA-mi' 'u-RAY-yib|모스크가 가까워요
+كِنِيسَة|ki-NEE-sa|키니사|교회|Church|feeh ki-NEE-sa fish-SHAA-ri'|길가에 교회가 있어요
+بُوسْطَة|BOS-ta|보스타|우체국|Post office|il-BOS-ta feen?|우체국이 어디예요?
+مَدْرَسَة|mad-RA-sa|마드라사|학교|School|mad-RA-sit lu-GHAAT|외국어 학교
+جَامْعَة|GAM-'a|감아|대학교|University|GAM-'it il-QAA-hi-ra|카이로 대학교
+نَادِي|NAA-di|나디|스포츠 클럽, 헬스장|Club, gym|RAA-yih in-NAA-di|스포츠 클럽에 가요
+جِنِينَة|gi-NEY-na|기니나|정원, 공원|Garden, park|gi-NEY-nit il-or-MAAN|오르만 식물공원
+كُوبَايَة|koo-BAA-ya|쿠바야|컵, 유리잔|Glass, cup|koo-BAA-yit MAY-ya law sa-MAHT|물 한 컵만 주세요
+طَبَق|TA-ba'|타바으|접시, 요리 그릇|Plate, dish|TA-ba' ruzz|밥 한 접시
+مَعْلَقَة|ma'-LA-'a|마을라아|숟가락|Spoon|'AA-yiz ma'-LA-'a su-GHAY-ya-ra|작은 티스푼 하나 주세요
+شُوكَة|SHOW-ka|쇼우카|포크|Fork|SHOW-ka w-sik-KEE-na|포크와 나이프
+سِكِّينَة|sik-KEE-na|시크키나|칼, 식칼|Knife|is-sik-KEE-na HAM-ya|칼이 잘 들어요
+مَنَادِيل|ma-na-DEEL|마나딜|휴지, 냅킨|Tissues, napkins|MUM-kin ma-na-DEEL?|휴지 좀 주시겠어요?
+زِيت|ZEET|지트|식용유, 기름|Oil|ZEET zee-TOON|올리브유
+خَلّ|KHALL|칼|식초|Vinegar|sa-LA-ta bi-khall|식초를 친 샐러드
+جِبْنَة|GIB-na|기브나|치즈|Cheese|GIB-na ROO-mi|이집트 짭짤한 옐로 치즈 (루미)
+بِيض|BEED|비드|달걀, 계란|Eggs|BEED MA'-li|계란 후라이
+غَسَل / يِغْسِل|gha-sal / YIGH-sil|가살 / 이그실|씻다, 빨래하다|Wash|IGH-sil EE-dak|손을 씻으세요
+نَضَّف / يِنَضَّف|nad-daf / yi-NAD-daf|낟다프 / 이낟다프|청소하다|Clean (verb)|NAD-daf il-OO-da|방 청소해 줘
+طَبَخ / يُطْبُخ|ta-bakh / yit-bukh|타바크 / 이트부크|요리하다|Cook|ta-BAKH-ti eh?|뭐 요리했어? (여성에게)
+جَاب / يِجِيب|gaab / yi-GEEB|가브 / 이기브|가져오다, 사오다|Bring, get|geeb li MAY-ya|나 물 좀 가져다줘
+حَطّ / يِحُطّ|hatt / yi-HOTT|핫트 / 이홋트|놓다, 넣다|Put, place|hott is-SUK-kar HI-na|설탕을 여기에 넣어
+أَخَد / يَاخُد|A-khad / YAA-khud|아카드 / 야쿠드|가지다, 타다, 먹다(약)|Take|khud da-WAAK|약 챙겨 먹어
+سَاب / يِسِيب|saab / yi-SEEB|사브 / 이시브|남겨두다, 놓아두다|Leave, let go|seeb il-ma-fa-TEEH HI-na|열쇠를 여기에 두고 가
+لَقَى / يِلَاقِي|la-'a / yi-LAA-'i|라아 / 일라이|찾아내다, 발견하다|Find|la-'EET il-mo-BAAYL?|휴대폰 찾았어?
+دَوَّر / يِدَوَّر|daw-war / yi-DAW-war|다우와르 / 이다우와르|찾아다니다, 검색하다|Look for, search|ba-DAW-war 'a-la TAK-si|택시를 찾고 있어요
+سَاعِد / يِسَاعِد|saa-'id / yi-SAA-'id|사이드 / 이사이드|돕다, 거들다|Help|MUM-kin ti-saa-'ID-ni?|저 좀 도와주실 수 있나요?
+طَيِّب|TAY-yib|타이입|착한, 친절한, 알겠어|Kind, fine, OK|'AL-bu TAY-yib|그는 마음씨가 착해요
+شَاطِر|SHAA-tir|샤티르|똑똑한, 유능한|Clever, skilled|duk-TOOR SHAA-tir|실력 있는 의사
+مُهِمّ|mu-HIMM|무힘|중요한|Important|maw-DOO' mu-HIMM|중요한 주제
+صَعْب|SA'B|사으브|어려운, 힘든|Difficult|il-im-ti-HAAN sa'b|시험이 어려워요
+سَهْل|SAHL|사흘|쉬운|Easy|il-'A-ra-bi sahl|아랍어는 쉬워요
+سَرِيع|sa-REE'|사리으|빠른|Fast|il-MET-ro sa-REE'|지하철은 빨라요
+بَطِيء|ba-TEE'|바티으|느린|Slow|in-NETT ba-TEE'|인터넷이 느려요
+نِضِيف|ni-DEEF|니디프|깨끗한|Clean (adj.)|il-ma-KAAN da ni-DEEF|여긴 깨끗해요
+وِسِخ|WI-sikh|위시크|더러운|Dirty|ish-SHAA-ri' WI-sikh|거리가 지저분해요
+مَلْيَان|mal-YAAN|말얀|꽉 찬, 가득한|Full|il-o-to-BEES mal-YAAN|버스에 사람이 꽉 찼어요`,
+5:`
+رَاس|RAAS|라스|머리|Head|RAA-si bi-tu-GA'-ni|머리가 아파요
+عِين|EEN|인|눈|Eye|EE-ni HAM-ra|눈이 충혈됐어요
+إِيد|EED|이드|손, 팔|Hand, Arm|IGH-sil EE-dak ku-WAY-yis|손을 깨끗이 씻으세요
+رِجْل|RIGL|리글|발, 다리|Foot, Leg|RIG-li WA'-fa|다리에 쥐가 났어요
+بَطْن|BATN|바튼|배, 복부|Stomach, Belly|BAT-ni bi-tu-GA'-ni|배가 아파요
+وَجَع|WA-ga'|와가으|통증, 아픔|Pain, Ache|feeh WA-ga' HI-na?|여기가 아픈가요?
+صُدَاع|su-DAA'|수다으|두통|Headache|'IN-di su-DAA' sha-DEED|두통이 심해요
+دَوَا|DA-wa|다와|약, 치료제|Medicine|khud id-DA-wa da|이 약을 드세요
+سُخُونِيَّة|su-khoo-NEY-ya|수쿠니야|열, 미열|Fever|'IN-du su-khoo-NEY-ya|그 사람은 열이 있어요
+سَلَامْتَك|sa-LAAM-tak|살람타크|쾌유를 빕니다|Get well soon|alf sa-LAA-ma 'a-LEEK|얼른 쾌차하세요
+هُدُوم|hu-DOOM|후둠|옷, 의류|Clothes|hu-DOOM ni-DEE-fa|깨끗한 옷
+قَمِيص|'a-MEES|아미스|셔츠, 남방|Shirt|il-'a-MEES da sheek|이 셔츠 멋지네요
+تِي شِيرْت|tee-SHEERT|티쉬르트|티셔츠|T-shirt|tee-SHEERT 'otn|면 티셔츠
+بَنْطَلُون|ban-ta-LON|반탈론|바지|Pants, Trousers|ban-ta-LON geenz|청바지
+جَاكِتَّة|ga-KIT-ta|자킷타|재킷, 점퍼|Jacket|IL-bis ig-ga-KIT-ta|재킷을 입으세요
+جَزْمَة|GAZ-ma|가즈마|신발, 구두|Shoes|I'-la' ig-GAZ-ma|신발을 벗으세요
+شَبْشَب|SHAB-shab|샤브샤브|슬리퍼, 샌들|Slippers|SHAB-shab beet|실내용 슬리퍼
+شَنْطَة|SHAN-ta|샨타|가방, 핸드백|Bag|ish-SHAN-ta ti-'EE-la|가방이 무거워요
+نَضَّارَة|nad-DAA-ra|낟다라|안경, 선글라스|Glasses|nad-DAA-rit shams|선글라스
+مَقَاس|ma-'AAS|마아스|사이즈, 치수|Size|il-ma-'AAS da maz-BOOT|사이즈가 딱 맞아요
+أَبْيَض|AB-yad|아비야드|흰색의|White|'a-MEES AB-yad|흰색 셔츠
+أَسْوَد|AS-wad|아스와드|검은색의|Black|'a-ra-BEY-ya SAW-da|검은색 승용차
+أَحْمَر|AH-mar|아흐마르|빨간색의|Red|tuf-FAAH AH-mar|빨간 사과
+أَزْرَق|AZ-ra'|아즈라으|파란색의|Blue|bahr AZ-ra'|푸른 바다
+أَخْضَر|AKH-dar|아크다르|초록색의|Green|shaay AKH-dar|녹차
+أَصْفَر|AS-far|아스파르|노란색의|Yellow|la-MOON AS-far|노란 레몬
+لَوْن|LOWN|로운|색, 색상|Color|lown hilw|예쁜 색이네요
+تَانِي|TAA-ni|타니|다른, 또 다른|Other, Another|feeh ma-'AAS TAA-ni?|다른 사이즈 있나요?
+زَيّ|ZAYY|자이|~처럼, 같은|Like, Similar to|ZAYY is-SUK-kar|설탕처럼 달콤한/귀여운
+نَفْس|NAFS|나프스|같은, 동일한|Same|NAFS il-HAA-ga|같은 물건/동일한 것
+اِفْتَكَر / يِفْتِكِر|if-ta-kar / yif-ti-kir|이프타카르 / 이프티키르|생각하다, 기억하다|Think, Remember|A-na fa-KART fil-maw-DOO'|그 문제에 대해 생각해 봤어요
+نِسِي / يِنْسَى|NI-si / YIN-sa|니시 / 인사|잊다, 깜빡하다|Forget|ma-tin-SAASH|잊지 마세요
+حَبّ / يِحِبّ|habb / yi-HIBB|하브 / 이히브|좋아하다, 사랑하다|Like, Love|ba-HIBB masr A-wi|저는 이집트를 정말 좋아해요
+عِرِف / يِعْرَف|'I-rif / YI'-raf|이리프 / 이으라프|알다, 알아채다|Know, Find out|'i-RIFT il-kha-bar?|그 소식 알았어?
+قِدِر / يِقْدَر|'I-dir / YI'-dar|이디르 / 이으다르|할 수 있다|Can, Be able to|mish 'AA-dir AM-shi|걸을 수가 없어요
+خَاف / يِخَاف|khaaf / yi-KHAAF|카프 / 이하프|무서워하다|Be afraid, Fear|mat-KHAFSH|겁먹지 마세요
+زِعِل / يِزْعَل|ZI-'il / YIZ-'al|지일 / 이즈알|화나다, 서운하다|Get upset|mat-za'-ALSH min-ni|나한테 서운해하지 마
+فِرِح / يِفْرَح|FI-rih / YIF-rah|피리흐 / 이프라흐|기뻐하다|Rejoice, Be glad|A-na far-HAAN beek|네가 기뻐서 좋아
+ضِحِك / يِضْحَك|DI-hik / YID-hak|디히크 / 이드하크|웃다|Laugh, Smile|bi-TID-hak 'a-la eh?|뭐 보고 웃어?
+عَيَّط / يِعَيَّط|'AY-yat / yi-'AY-yat|아얏 / 이아얏|울다|Cry, Weep|il-BENT bit-'AY-yat|여자아이가 울고 있어요
+شَمْس|SHAMS|샴스|태양, 햇빛|Sun|ish-SHAMS TAL-'a|해(햇빛)가 쨍쨍해요
+قَمَر|'A-mar|아마르|달, 미인|Moon, Beautiful|il-'A-mar mu-NAW-war|달이 밝네요
+نِيل|NEEL|닐|나일강|Nile River|'A'-da 'a-lan-NEEL|나일강 변에 앉아 쉬기
+هَوَا|HA-wa|하와|바람, 공기|Wind, Air|il-HA-wa hilw in-na-HAR-da|오늘 바람이 시원해요
+مَطَر|MA-tar|마타르|비|Rain|id-DUN-ya bit-MAT-tar|비가 내리고 있어요
+تُرَاب|tu-RAAB|투라브|먼지, 흙먼지|Dust|il-GAWW feeh tu-RAAB|공기에 모래먼지가 많아요
+رَمْلَة|RAM-la|람라|모래|Sand|RAM-lit is-SAH-ra|사막의 모래
+صَحْرَا|SAH-ra|사흐라|사막|Desert|ha-ra-MAAT il-GEE-za fis-SAH-ra|기자 피라미드는 사막에 있어요
+بَحْر|BAHR|바흐르|바다, 큰 강|Sea|ray-HEEN il-BAHR|바다로 놀러 가요
+نُور|NOOR|누르|빛, 조명, 전기|Light|WAL-la' in-NOOR law sa-MAHT|불 좀 켜 주세요`,
+6:`
+كُرْسِي|KUR-si|쿠르시|의자|Chair|I'-'ud 'a-lal-KUR-si|의자에 앉으세요
+تَرَابِيزَة|ta-ra-BEE-za|타라비자|테이블, 식탁|Table|hott il-AKL 'a-lat-ta-ra-BEE-za|음식을 식탁 위에 놓아
+سِرِير|si-REER|시리르|침대|Bed|si-REER mu-REEH|편안한 침대
+كَنَبَة|KA-na-ba|카나바|소파, 긴 의자|Sofa, Couch|'AA-'id 'a-lal-KA-na-ba|소파에 앉아 있어요
+تَلَّاجَة|tal-LAA-ga|탈라가|냉장고|Refrigerator, Fridge|il-MAY-ya fit-tal-LAA-ga|물은 냉장고에 있어요
+غَسَّالَة|ghas-SAA-la|가스살라|세탁기|Washing machine|shagh-GHAL il-ghas-SAA-la|세탁기 좀 돌려줘
+بُوتَاجَاز|bo-ta-GAAZ|보타가즈|가스레인지|Gas stove|WAL-la' il-bo-ta-GAAZ|가스레인지 불을 켜
+تِلِفِزْيُون|ti-li-fiz-YON|틸리피즈욘|텔레비전|Television, TV|bi-tit-FAR-rag 'a-lat-ti-li-fiz-YON|TV를 보고 있어요
+مِرَايَة|mi-RAA-ya|미라야|거울|Mirror|buss fil-mi-RAA-ya|거울을 봐
+دُولَاب|do-LAAB|둘라브|옷장, 수납장|Wardrobe, Closet|il-hu-DOOM fid-do-LAAB|옷은 옷장에 있어요
+دُوش|DOOSH|두쉬|샤워, 샤워기|Shower|HAA-khud doosh|샤워할게요
+صَابُون|sa-BOON|사분|비누|Soap|IGH-sil bis-sa-BOON|비누로 씻으세요
+شَامْبُو|SHAM-boo|샴부|샴푸|Shampoo|SHAM-boo lish-SHA'R|모발용 샴푸
+فُوطَة|FOO-ta|푸타|수건, 타월|Towel|MUM-kin FOO-ta ni-DEE-fa?|깨끗한 수건 주시겠어요?
+فُرْشَة|FUR-sha|푸르샤|칫솔, 솔|Toothbrush, Brush|FUR-shit si-NAAN|칫솔
+مَعْجُون|ma'-GOON|마으군|치약, 연고|Toothpaste, Paste|ma'-GOON si-NAAN|치약
+حَنَفِيَّة|ha-na-FEY-ya|하나피야|수도꼭지|Faucet, Tap|I'-fil il-ha-na-FEY-ya|수도꼭지를 잠그세요
+بَانْيُو|BAN-yo|반요|욕조|Bathtub|il-BAN-yo ki-BEER|욕조가 크네요
+سَخَّان|sakh-KHAAN|사크칸|온수기, 보일러|Water heater|shagh-GHAL is-sakh-KHAAN|온수기 좀 켜 줘
+زِبَالَة|zi-BAA-la|지발라|쓰레기, 오물|Trash, Garbage|IR-mi iz-zi-BAA-la|쓰레기를 버리세요
+قَعَد / يِقْعُد|'a-'ad / YI'-'ud|아아드 / 이으우드|앉다, 머무르다|Sit, Stay|ha-TI'-'ud kaam yom?|며칠 머무르실 건가요?
+وِقِف / يِقَف|WI-'if / YI-'af|위이프 / 이아프|서다, 멈추다|Stand, Stop|U-'af HI-na law sa-MAHT|여기 멈춰 주세요
+خَرَج / يِخْرُج|KHA-rag / YIKH-rug|카라그 / 이크루그|나가다, 외출하다|Go out, Exit|A-na KHA-rig dil-WA'-ti|저 지금 나가는 중이에요
+دَخَل / يِدْخُل|DA-khal / YID-khul|다칼 / 이드쿨|들어가다, 들어오다|Enter, Come in|ID-khul, it-FAD-dal|어서 들어오세요
+فِهِم / يِفْهَم|FI-him / YIF-ham|피힘 / 이프함|이해하다, 알아듣다|Understand|fi-HIMT 'AS-dak|무슨 뜻인지 이해했어
+بَعَت / يِبْعَت|ba-'at / YIB-'at|바아트 / 이브아트|보내다, 발송하다|Send|IB-'at li il-lo-KAY-shan|위치 찍어 보내줘
+وَصَل / يِوْصَل|WA-sal / YIW-sal|와살 / 이우살|도착하다|Arrive|ha-TOW-sal IM-ta?|언제 도착해?
+سَاق / يِسُوق|saaq / yi-SOO'|사크 / 이수으|운전하다|Drive|bi-ti-SOO' bir-RAA-ha|운전을 조심조심 잘하네요
+نَادَى / يِنَادِي|NAA-da / yi-NAA-di|나다 / 이나디|부르다, 소리치다|Call, Shout to|NAA-di 'a-lal-gar-SON|웨이터 좀 불러봐
+رَدّ / يِرُدّ|radd / yi-RODD|라드 / 이로드|대답하다, 전화 받다|Answer, Reply|rodd 'a-lat-ti-li-FON|전화 좀 받아봐
+حَادِق|HA-di'|하디으|짠, 짭짤한|Salty|il-AKL HA-di' shu-WAY-ya|음식이 조금 짜요
+حِرِّيف|hir-REEF|히르리프|매운, 얼얼한|Spicy, Hot|SHAT-ta hir-REE-fa|매운 고춧가루/소스
+مُرّ|MORR|모르|쓴, 쌉싸름한|Bitter|il-'AH-wa MOR-ra|커피가 써요
+حَامِض|HA-mid|하미드|신, 시큼한|Sour|il-la-MOON HA-mid|레몬이 셔요
+مَسْلُوق|mas-LOO'|마슬루으|삶은, 데친|Boiled|BEED mas-LOO'|삶은 달걀
+مَشْوِي|mash-WI|마슈위|숯불구이의|Grilled, Roasted|fi-RAAKH mash-WEY-ya|숯불 치킨구이
+مَقْلِي|MA'-li|마으리|튀긴|Fried|ba-TAA-tis ma'-LEY-ya|감자튀김
+طَازَة|TAA-za|타자|신선한, 갓 나온|Fresh|FAK-ha TAA-za|신선한 과일
+مَسْبُوك|mas-BOOK|마스부크|양념이 진한|Rich sauce, Simmered|SAL-sa mas-BOO-ka|진하게 졸인 토마토소스
+مَظْبُوط|maz-BOOT|마즈부트|딱 알맞은, 보통 단맛의|Perfect|'AH-wa maz-BOOT|설탕을 적당히 넣은 커피
+كُلّ|KULL|쿨|모든, 전부|All, Every|kull in-NAAS|모든 사람들
+بَعْض|BA'D|바으드|일부, 몇몇|Some, A few|ba'd il-aw-'AAT|어떤 때는
+خَالِص|KHAA-lis|칼리스|전혀, 완전히|At all, Completely|ma-FEESH MAA-ni' KHAA-lis|전혀 문제없어요
+دَايْمًا|DAY-man|다이만|항상, 언제나|Always|DAY-man mab-SOOT|늘 행복하세요
+سَاعَات|sa-'AAT|사아트|가끔, 때때로|Sometimes|sa-'AAT ba-SAA-fir|가끔 여행을 가요
+عُمُومًا|'u-MOO-man|우무만|일반적으로, 대개|Generally|'u-MOO-man KUL-lu ta-MAAM|전반적으로 다 괜찮아요
+طَبْعًا|TAB-'an|탑안|물론이지, 당연히|Of course|TAB-'an ya SAH-bi|친구야 당연하지
+أَكِيد|a-KEED|아키드|확실히, 분명히|Surely, Definitely|a-KEED HAA-gi|분명히 꼭 갈게요
+تَقْرِيبًا|ta'-REE-ban|타으리반|대략, 거의|Approximately, Almost|ta'-REE-ban SAA-'a|대략 한 시간 정도요
+فِعْلًا|FI'-lan|피으란|정말로, 실제로|Really, Indeed|FI'-lan ka-LAA-mak sahh|정말 당신 말이 맞아요`,
+7:`
+شُغْل|SHUGHL|슈글|일, 직장, 업무|Work, Job|A-na fish-SHUGHL dil-WA'-ti|저 지금 일하는 중이에요
+مَكْتَب|MAK-tab|마크탑|사무실, 책상|Office, Desk|RAA-yih il-MAK-tab|사무실 가는 길이에요
+وَرَقَة|WA-ra-'a|와라아|종이, 문서, 서류|Paper, Document|MUM-kin WA-ra-'a w-'A-lam?|종이와 펜 좀 주시겠어요?
+قَلَم|'A-lam|알람|펜, 필기도구|Pen, Pencil|ma-'AAK 'A-lam?|펜 가지고 계신가요?
+كِتَاب|ki-TAAB|키탑|책|Book|ki-TAAB 'A-ra-bi|아랍어 책
+اِجْتِمَاع|ig-ti-MAA'|이그티마으|회의, 미팅|Meeting|'IN-di ig-ti-MAA' mu-HIMM|중요한 회의가 있어요
+مُدِير|mu-DEER|무디르|관리자, 상사, 매니저|Manager, Boss|il-mu-DEER mash-GHOOL|매니저님이 지금 바쁘셔요
+شِرْكَة|SHE-ri-ka|셰리카|회사, 기업|Company|SHE-ri-ka ki-BEE-ra|대기업
+كُمْبِيُوتَر|kam-byo-TAR|캄뵤타르|컴퓨터, 노트북|Computer|shagh-GHAAL 'a-lal-kam-byo-TAR|컴퓨터로 작업 중이에요
+إِيمِيل|ee-MEEL|이밀|이메일|Email|ba-'AT-ti-lak ee-MEEL|이메일 보냈어요
+غَدَا|GHA-da|가다|점심 식사|Lunch|ha-nit-GHAD-da feen?|점심 어디서 먹을까?
+مَطْعَم|MAT-'am|마트암|식당, 레스토랑|Restaurant|MAT-'am MAS-ri|이집트 전통 식당
+مِنْيُو|MEN-yu|메뉴|메뉴판|Menu|MUM-kin il-MEN-yu law sa-MAHT?|메뉴판 좀 주시겠어요?
+كُشَرِي|KOSH-a-ri|코샤리|코샤리 (이집트 국민 요리)|Koshari|TA-ba' KOSH-a-ri ki-BEER|코샤리 큰 그릇 하나
+فُول|FOOL|풀|누에콩 요리 (이집트 주식)|Ful, Beans|san-da-WITSH fool|풀 샌드위치
+طَعْمِيَّة|ta'-MEY-ya|타으미야|타으미야 (이집트식 팔라펠)|Falafel|ta'-MEY-ya SOKH-na|따끈한 타으미야
+شَاوِرْمَا|sha-WAR-ma|샤와르마|샤와르마 샌드위치|Shawarma|sha-WAR-ma LAH-ma|소고기 샤와르마
+حَلَوِيَّات|ha-la-wey-YAAT|할라위얏|디저트, 전통 단 과자|Sweets, Desserts|ha-la-wey-YAAT shar-'EY-ya|아랍 전통 디저트
+بَسْبُوسَة|bas-BOO-sa|바스부사|바스부사 (세몰리나 케이크)|Basbousa|bas-BOO-sa bil-mu-kas-sa-RAAT|견과류 바스부사
+كُنَافَة|ko-NAA-fa|코나파|쿠나파 (전통 페이스트리)|Kunafa|ko-NAA-fa bil-'ESH-ta|크림 쿠나파
+بَدَأ / يِبْدَأ|BA-da' / YIB-da'|바다 / 이브다|시작하다|Start, Begin|il-FILM ha-YIB-da' dil-WA'-ti|영화가 곧 시작해요
+قَرَّر / يِقَرَّر|'ar-rar / yi-'AR-rar|아르라르 / 이아르라르|결정하다|Decide|'ar-RART a-SAA-fir|여행 가기로 결정했어요
+حَاوِل / يِحَاوِل|HAA-wil / yi-HAA-wil|하윌 / 이하윌|시도하다, 노력하다|Try, Attempt|HAA-wil MAR-ra TAA-nya|한 번 더 시도해 봐
+قِبِل / يِقْبَل|'I-bil / YI'-bal|이빌 / 이으발|수락하다, 받아들이다|Accept|HUW-wa 'I-bil il-'ARD|그는 제안을 수락했어요
+رَفَض / يِرْفُض|RA-fad / YIR-fud|라파드 / 이르푸드|거절하다|Refuse, Reject|leeh ra-FADT?|왜 거절하셨어요?
+حَجَز / يِحْجِز|HA-gaz / YIH-giz|하가지 / 이흐기즈|예약하다|Book, Reserve|'AA-yiz AH-giz ta-ra-BEE-za|테이블 하나 예약하고 싶어요
+غَيَّر / يِغَيَّر|ghay-yar / yi-GHAY-yar|가이야르 / 이가이야르|바꾸다, 환전하다|Change, Exchange|'AA-yiz a-GHAY-yar fu-LOOS|환전하고 싶어요
+صَلَّح / يِصَلَّح|sal-lah / yi-SAL-lah|살라흐 / 이살라흐|수리하다, 고치다|Repair, Fix|MUM-kin ti-SAL-lah it-tak-YEEF?|에어컨 좀 고쳐 주실래요?
+كَسَر / يِكْسِر|KA-sar / YIK-sir|카사르 / 이크시르|깨뜨리다, 부수다|Break|il-koo-BAA-ya it-KA-sa-rit|컵이 깨졌어요
+وَافِق / يِوَافِق|WAA-fi' / yi-WAA-fi'|와피으 / 이와피으|동의하다, 찬성하다|Agree|A-na mu-WAA-fi' 'a-lal-FIK-ra|그 생각에 동의해요
+قَلْقَان|'al-'AAN|알안|걱정스러운, 불안한|Worried, Anxious|mat-ba-'AASH 'al-'AAN|너무 걱정하지 마세요
+مُتَأَكِّد|mu-ta-'AK-kid|무타악키드|확신하는|Sure, Certain|IN-ta mu-ta-'AK-kid?|당신 확실해요?
+مَشْغُول|mash-GHOOL|마슈굴|바쁜|Busy|A-na mash-GHOOL GID-dan|저 지금 너무 바빠요
+فَاضِي|FAA-di|파디|한가한, 빈|Free, Empty|hal had-RI-tak FAA-di?|지금 시간 괜찮으세요?
+مَحْظُوظ|mah-ZOOT|마흐주트|운이 좋은|Lucky, Fortunate|IN-ta mah-ZOOT A-wi|당신은 참 운이 좋네요
+شُجَاع|sho-GAA'|쇼가으|용감한|Brave, Courageous|WA-lad sho-GAA'|용감한 아이
+خَايِف|KHAA-yif|카이프|두려워하는|Afraid, Scared|A-na mish KHAA-yif|난 두렵지 않아
+هَادِي|HAA-di|하디|조용한, 차분한|Calm, Quiet|il-ma-KAAN HI-na HAA-di|여긴 참 조용하네요
+مُتَحَمِّس|mu-ta-HAM-mis|무타함미스|신난, 기대되는|Excited|A-na mu-ta-HAM-mis lir-RIH-la|여행이 정말 기대돼요
+مَكْسُوف|mak-SOOF|마크수프|부끄러워하는, 수줍은|Shy|HEE-ya mak-SOO-fa shu-WAY-ya|그녀는 조금 수줍어해요
+يَا رَبّ|ya RABB|야 라브|부디, 제발|Oh Lord, Hopefully|ya RABB kheer|부디 좋은 일만 있기를
+وَاللهِ|wal-LAA-hi|왈라히|진짜로, 맹세코|By God, Honestly|wal-LAA-hi maz-BOOT|진짜로 딱 맞아요
+حَبِيبِي|ha-BEE-bi|하비비|내 친구, 친애하는 분|My friend|SHUK-ran ya ha-BEE-bi|고마워 내 친구야
+بَاشَا|BA-sha|바샤|대장님, 사장님|Boss, Pasha|U'-mur ya BA-sha|말씀만 하세요 대장님
+كُلّ سَنَة|kull SA-na|쿨 사나|명절 축하 축약 인사|Festive celebration|kull SA-na w-an-tum tay-yi-BEEN|모두 축복받는 날 되세요
+مَبْرُوك|mab-ROOK|마브루크|축하합니다|Congratulations|alf mab-ROOK|천 번 만 번 축하해요
+الله يِبَارِك فِيك|al-LAAH yi-BAA-rik feek|알라 이바리크 피크|축하 화답|God bless you (reply)|al-LAAH yi-BAA-rik feek ya GHAA-li|축하해 줘서 고마워요
+حَاضِر|HAA-dir|하디르|네, 알겠습니다|Ready, At your service|HAA-dir, min 'ay-NAY-ya|네, 바로 준비해 드리겠습니다
+مِنْ عِينَيَّا|min 'ay-NAY-ya|민 아이나이야|기꺼이 해드리지요|Gladly, With pleasure|AYY KHID-ma? min 'ay-NAY-ya|도울 일 있나요? 기꺼이요!
+تَسْلَم|TAS-lam|타슬람|고맙습니다|Thank you, Bless you|TAS-lam EE-dak|수고해 주셔서 고마워요`,
+8:`
+سُوق|SOO'|수으|시장|Market|ray-HEEN is-SOO'|시장에 가는 길이에요
+كِيلُو|KEE-lo|킬로|킬로그램, kg|Kilo|'AA-yiz it-NEEN KEE-lo|2킬로 주세요
+طَمَاطِم|ta-MAA-tim|타마팀|토마토|Tomatoes|KEE-lo ta-MAA-tim bi-KAAM?|토마토 1kg에 얼마예요?
+خِيَار|khe-YAAR|키야르|오이|Cucumbers|khe-YAAR SAA-hi|싱싱한 오이
+بَصَل|BA-sal|바살|양파|Onions|hott BA-sal fis-sa-LA-ta|샐러드에 양파를 넣어
+تُوم|TOWM|토움|마늘|Garlic|fiss TOWM|마늘 한 쪽
+بَطَاطِس|ba-TAA-tis|바타티스|감자|Potatoes|KEE-lo ba-TAA-tis law sa-MAHT|감자 1kg 주세요
+مُوز|MOWZ|모우즈|바나나|Bananas|il-MOWZ da ma-SAK-kar|이 바나나 달콤해요
+بُرْتُقَان|bur-tu-'AAN|부르투안|오렌지|Oranges|'a-SEER bur-tu-'AAN freesh|생오렌지 주스
+مَانْجَا|MAN-ga|만가|망고|Mangoes|il-MAN-ga il-MAS-ri HIL-wa|이집트 망고는 정말 맛있어요
+السَّبْت|is-SABT|이스삽트|토요일|Saturday|nit-'AA-bil yom is-SABT|토요일에 만나요
+الحَدّ|il-HADD|일하드|일요일|Sunday|ish-SHUGHL bi-YIB-da' yom il-HADD|일요일에 일이 시작돼요
+الاِتْنِين|il-it-NEEN|일이트닌|월요일|Monday|'IN-di mee-'AAD yom il-it-NEEN|월요일에 약속이 있어요
+التَّلَات|it-ta-LAAT|잇탈랏|화요일|Tuesday|yom it-ta-LAAT is-SUBH|화요일 아침에
+الأَرْبَع|il-AR-ba'|일아르바으|수요일|Wednesday|ha-SAA-fir yom il-AR-ba'|수요일에 여행 가요
+الخَمِيس|il-kha-MEES|일카미스|목요일|Thursday|SAH-rit yom il-kha-MEES|목요일 밤의 외출
+الجُمْعَة|ig-GOM-'a|입곰아|금요일 (이집트 휴일)|Friday|GOM-'a mu-BAA-ra-ka|축복받는 금요일 되세요
+إِجَازَة|i-GAA-za|이가자|휴일, 휴가, 쉬는 날|Holiday, Day off|in-na-HAR-da i-GAA-za|오늘은 쉬는 날이에요
+مِيعَاد|mee-'AAD|미아드|약속, 예약 시간|Appointment|il-mee-'AAD is-SAA-'a KHAM-sa|약속 시간은 5시입니다
+تَأْخِير|ta'-KHEER|타키르|지연, 늦음|Delay, Lateness|AA-sif 'a-lat-ta'-KHEER|늦어서 죄송합니다
+ذَاكِر / يِذَاكِر|ZAA-kir / yi-ZAA-kir|자키르 / 이자키르|공부하다, 복습하다|Study|A-na ba-ZAA-kir 'A-ra-bi|저 아랍어 공부하고 있어요
+قَرَا / يِقْرَا|'A-ra / YI'-ra|아라 / 이으라|읽다|Read|I'-ra ir-ri-SAA-la|메시지를 읽어봐
+كَتَب / يِكْتِب|KA-tab / YIK-tib|카탑 / 이크팁|쓰다, 적다|Write|IK-tib 'in-WAA-nak|주소를 적어 주세요
+لِعِب / يِلْعَب|LI-'ib / YIL-'ab|리입 / 일아브|놀다, 운동하다|Play, Exercise|bi-YIL-'ab KOO-ra|축구를 하고 있어요
+جِرِي / يِجْرِي|GI-ri / YIG-ri|기리 / 이그리|달리다, 뛰다|Run|IG-ri bi-SUR-'a|빨리 뛰어
+مَشَى / يِمْشِي|MA-sha / YIM-shi|마샤 / 임쉬|걷다, 떠나다|Walk, Leave|A-na HAM-shi dil-WA'-ti|저 지금 출발할게요
+حَكَى / يِحْكِي|HA-ka / YIH-ki|하카 / 이흐키|이야기하다, 들려주다|Tell, Recount|IH-ki li eh ha-SAL|무슨 일 있었는지 말해줘
+شَرَح / يِشْرَح|SHA-rah / YISH-rah|샤라흐 / 이슈라흐|설명하다|Explain|MUM-kin TISH-rah li?|저한테 설명 좀 해주시겠어요?
+فَرَّج / يِفَرَّج|far-rag / yi-FAR-rag|파르라그 / 이파르라그|보여주다, 구경시키다|Show|far-RAG-ni 'a-las-SU-war|사진 구경시켜 줘
+شَال / يِشِيل|shaal / yi-SHEEL|샬 / 이실|들다, 나르다, 치우다|Carry, Lift|sheel ish-SHAN-ta law sa-MAHT|가방 좀 들어주실래요?
+طَوِيل|ta-WEEL|타윌|키가 큰, 길이가 긴|Tall, Long|RAA-gil ta-WEEL|키가 큰 남자
+قُصَيَّر|'u-SAY-yar|우사이야르|키가 작은, 짧은|Short|SHAA-ri' 'u-SAY-yar|짧은 골목길
+تِخِين|ti-KHEEN|티킨|뚱뚱한, 두꺼운|Fat, Thick|ki-TAAB ti-KHEEN|두꺼운 책
+رُفَيَّع|ru-FAY-ya'|루파이야으|날씬한, 마른, 얇은|Thin, Slim|BENT ru-fay-ya-'A|날씬한 소녀
+جَمِيل|ga-MEEL|가밀|아름다운, 훌륭한, 멋진|Beautiful|GAWW ga-MEEL|날씨가 참 좋네요
+وِحِش|WI-hish|위히쉬|나쁜, 못생긴, 안 좋은|Bad, Ugly|KHA-bar WI-hish|안 좋은 소식
+شَابّ|SHAABB|샤브|청년, 젊은이|Young man|SHAABB muh-ta-RAM|예의 바른 청년
+عَجُوز|a-'OOZ|아주즈|노인, 나이 지긋한|Old, Elderly|RAA-gil a-'OOZ|노신사, 할아버지
+غَنِي|GHA-ni|가니|부유한|Rich, Wealthy|RAA-gil GHA-ni|부유한 사람
+فَقِير|fa-'EER|파이르|가난한, 불쌍한|Poor|RAA-gil fa-'EER|가난한 사람
+فَكَّة|FAK-ka|파크카|잔돈, 동전|Small change|ma-'AAK FAK-ka?|잔돈 있으신가요?
+صَرَّافَة|sar-RAA-fa|사르라파|환전소|Exchange office|A'-rab sar-RAA-fa feen?|가장 가까운 환전소가 어디예요?
+إِي تِي إِم|ay-tee-EM|에이티엠|ATM, 현금인출기|ATM|feeh ay-tee-EM 'u-RAY-yib?|근처에 ATM 있나요?
+كَارْت|KART|카르트|카드, 결제 카드|Card|bi-ti'-ba-LOO kart?|카드 결제 되나요?
+سَحَب / يِسْحَب|SA-hab / YIS-hab|사하브 / 이스하브|인출하다, 뽑다|Withdraw|'AA-yiz AS-hab fu-LOOS|현금 인출하고 싶어요
+حَوِّل / يِحَوِّل|HAW-wil / yi-HAW-wil|하우윌 / 이하우윌|송금하다, 이체하다|Transfer|HAW-wil li il-fu-LOOS|나한테 돈 이체해 줘
+رَصِيد|ra-SEED|라시드|잔액, 통화 충전금|Balance, Credit|sha-HANT ra-SEED lil-mo-BAAYL|휴대폰 요금 충전했어요
+فَاتُورَة|fa-TOO-ra|파투라|영수증, 공과금 청구서|Bill, Invoice|fa-TOO-rit il-kah-RA-ba|전기요금 고지서
+عَرْض|'ARD|아르드|할인 행사, 특가 제안|Special offer|feeh 'ard ku-WAY-yis|좋은 특가 행사가 있네요
+خَصْم|KHASM|카슴|할인, 디스카운트|Discount|MUM-kin khasm shu-WAY-ya?|할인 조금만 더 해주시겠어요?`,
+9:`
+هَرَم|HA-ram|하람|피라미드|Pyramid|HA-ram KHOO-foo il-ki-BEER|쿠푸왕의 대피라미드
+أَبُو الهُول|a-bul-HOOL|아불훌|스핑크스|Sphinx|GAMB a-bul-HOOL|스핑크스 바로 옆에
+مَتْحَف|MAT-haf|마트하프|박물관|Museum|il-MAT-haf il-MAS-ri il-ki-BEER|대이집트 박물관(GEM)
+تَذْكَرَة|taz-KA-ra|타즈카라|표, 입장권, 티켓|Ticket|it-NEEN ta-ZAA-kir law sa-MAHT|티켓 두 장 주세요
+آثَار|aa-SAAR|아사르|유적, 고대 유물|Antiquities|aa-SAAR fir-'own-NEY-ya|파라오의 고대 유적
+جَوْلَة|GOW-la|고울라|투어, 관람, 둘러보기|Tour|GOW-la fil-ah-ra-MAAT|피라미드 투어
+مُرْشِد|MUR-shid|무르쉬드|관광 가이드, 안내원|Guide|MUR-shid se-YAA-hi|관광 가이드
+صُورَة|SOO-ra|수라|사진, 그림|Photo, Picture|MUM-kin SOO-ra HI-na?|여기서 사진 한 장 찍어도 될까요?
+سِيَاحَة|se-YAA-ha|시야하|관광, 여행|Tourism|A-na gayy se-YAA-ha|저는 관광하러 왔어요
+هَدِيَّة|ha-DEY-ya|하디야|선물, 기념품|Gift, Souvenir|ha-DEY-ya taz-ka-REY-ya|여행 기념품
+لُوكِيشَن|lo-KAY-shan|로케이션|GPS 위치, 핀 위치|Location, Pin|ba-'AT-ti-lak il-lo-KAY-shan|위치 핀 찍어 보냈어요
+عِنْوَان|'in-WAAN|인완|주소|Address|il-'in-WAAN maz-BOOT|주소가 정확합니다
+عِمَارَة|'e-MAA-ra|이마라|건물, 아파트 건물|Building, Block|'e-MAA-ra raqm 'A-sha-ra|10동 건물
+دُور|DOWR|도우르|층, 차례|Floor, Level|id-DOWR it-TAA-lit|3층
+شَقَّة|SHA'-'a|샤아|아파트 세대, 호수|Apartment, Flat|SHA'-'a KHAM-sa|5호
+أَسَانْسِير|a-san-SEER|아산시르|엘리베이터|Elevator, Lift|IT-la' bil-a-san-SEER|엘리베이터 타고 올라오세요
+طَيَّار|tay-YAAR|타이야르|배달 라이더, 배달원|Delivery driver|it-tay-YAAR WA-sal TAHT|배달 기사님이 아래 도착했어요
+دِلِيفَرِي|de-li-ve-ri|딜리버리|배달 서비스|Delivery|'IN-da-kum de-li-ve-ri?|배달 되나요?
+بَوَّاب|baw-WAAB|바우왑|건물 관리인, 수위|Doorman, Caretaker|IS-'al il-baw-WAAB|관리인 아저씨께 여쭤봐
+رَكْنَة|RAK-na|라크나|주차 공간, 주차|Parking spot|feeh RAK-na HI-na?|여기 주차 자리 있나요?
+شَحَن / يِشْحَن|SHA-han / YISH-han|샤한 / 이슈한|충전하다|Charge|'AA-yiz ASH-han il-mo-BAAYL|휴대폰 충전하고 싶어요
+وَقَّع / يِوَقَّع|wa'-'a' / yi-WA'-'a'|와아 / 이와아|떨어뜨리다, 서명하다|Drop, Sign|WA'-'a' 'a-lal-WA-ra-'a|서류에 서명해 주세요
+ضَيَّع / يِضَيَّع|day-ya' / yi-DAY-ya'|다이야으 / 이다이야으|잃어버리다|Lose, Misplace|day-YA'T il-ma-fa-TEEH|열쇠를 잃어버렸어요
+صَوَّر / يِصَوَّر|saw-war / yi-SAW-war|사우와르 / 이사우와르|사진 찍다|Take photo|saw-WAR-ni law sa-MAHT|사진 한 장만 찍어주실래요?
+بَدِّل / يِبَدِّل|bad-dal / yi-BAD-dal|바달 / 이바달|교환하다, 바꾸다|Exchange, Swap|'AA-yiz a-BAD-dil il-'a-MEES da|이 셔츠 교환하고 싶어요
+رَكِّب / يِرَكِّب|rak-kib / yi-RAK-kib|라크킵 / 이라크킵|설치하다, 조립하다|Install|rak-KIBT il-khatt ig-ga-DEED|새 유심칩을 끼웠어요
+فَصَل / يِفْصِل|FA-sal / YIF-sil|파살 / 이프실|꺼지다, 흥정하다|Power off, Bargain|IF-sil fis-SI'R shu-WAY-ya|가격 흥정 좀 해봐
+كَمِّل / يِكَمِّل|kam-mil / yi-KAM-mil|캄밀 / 이캄밀|계속하다, 끝내다|Continue, Finish|kam-MIL 'a-la TOOL|계속 쭉 직진하세요
+سَكَت / يِسْكُت|SA-kat / YIS-kut|사캇 / 이스쿠트|조용히 하다, 침묵하다|Be quiet|IS-kut shu-WAY-ya|잠깐 조용히 해봐
+جَرَّب / يِجَرَّب|gar-rab / yi-GAR-rab|가르라브 / 이가르라브|시도하다, 맛보다|Try, Taste|gar-RABT il-AKL da?|이 음식 먹어봤어?
+خَلِّي بَالَك|khal-li BAA-lak|칼리 발라크|조심해, 주의해|Watch out, Careful|khal-li BAA-lak min il-'a-ra-bey-YAAT|차 조심하세요
+نَجْدَة|NAG-da|나그다|긴급 구조, 경찰(122)|Police emergency|it-TA-sil bin-NAG-da|경찰 122에 전화하세요
+إِسْعَاف|is-'AAF|이스아프|구급차, 응급의료(123)|Ambulance|IT-lub il-is-'AAF|구급차를 불러주세요
+مَطَافِي|ma-TAA-fi|마타피|소방서, 소방차(180)|Fire department|'a-ra-BEY-yit il-ma-TAA-fi|소방차
+حَادْثَة|HAD-sa|하드사|사고, 충돌|Accident, Crash|feeh HAD-sa fit-ta-REE'|도로에 사고가 났어요
+خَطَر|KHA-tar|카타르|위험|Danger|il-ma-KAAN da KHA-tar|여기는 위험해요
+حَرَامِي|ha-RAA-mi|하라미|도둑, 소매치기|Thief, Robber|IM-sik ha-RAA-mi!|도둑 잡아라!
+شُرْطَة|SHOR-ta|쇼르타|경찰, 경찰서|Police|QISM ish-SHOR-ta|경찰서
+ضَايِع|DAA-yi'|다이으|길을 잃은, 분실된|Lost, Missing|A-na DAA-yi' HI-na|저 길을 잃었어요
+مُسَاعْدَة|mu-SAA-'a-da|무사아다|도움, 지원|Help, Assistance|MUM-kin mu-SAA-'a-da?|도움 좀 받을 수 있을까요?
+بِالهَنَا وَالشِّفَا|bil-HA-na wash-SHI-fa|빌하나 와쉬쉬파|맛있게 드세요|Bon appétit|it-FAD-dal, bil-HA-na wash-SHI-fa|드세요, 맛있게 드세요
+الله يِهَنِّيك|al-LAAH yi-han-NEEK|알라 이한니크|식사 인사 화답|God bless you|al-LAAH yi-han-NEEK ya FAN-dim|맛있게 먹겠습니다, 고마워요
+شَرَّفْتِنَا|shar-raf-TI-na|샤르라프티나|와주셔서 영광입니다|Honored by visit|AH-lan beek, shar-raf-TI-na|환영합니다, 와주셔서 영광이에요
+الشَّرَف لِيَّا|ash-SHA-raf LEEY-ya|아쉬샤라프 리이야|제가 더 영광입니다|Honor is mine|ash-SHA-raf LEEY-ya ya FAN-dim|찾아뵙게 되어 제가 더 영광입니다
+نَوَّرْت|naw-WART|나우와르트|자리를 빛내주셨네요|You brightened us|il-BEET naw-WAR beek|당신 덕분에 집이 환해졌어요
+بِنُورَك|bi-NOO-rak|비누라크|당신 덕분입니다 (화답)|By your light|da bi-NOO-rak wal-LAA-hi|말씀 덕분에 제가 더 감사해요
+بَرَكَة|BA-ra-ka|바라카|축복, 은혜|Blessing, Grace|ze-YAR-tak BA-ra-ka|당신의 방문은 큰 축복입니다
+صَحّ|SAHH|사흐|맞아요, 옳아요|Right, Correct|ka-LAA-mak sahh MEY-ya fil-MEY-ya|당신 말이 100% 맞아요
+غَلَط|GHA-lat|갈랏|틀렸어요, 잘못|Wrong, Mistake|in-NIM-ra di GHA-lat|전화번호가 잘못되었습니다
+سَلَام|sa-LAAM|살람|안녕, 평화|Peace, Bye|ma'a is-sa-LAA-ma, sa-LAAM|안녕히 가세요, 안녕!`,
+10:`
+أَلُو|A-lo|알로|여보세요|Hello|A-lo, meen ma-'AA-ya?|여보세요, 누구시죠?
+أَجْزَخَانَة|a-gaz-KHA-na|아가즈카나|약국 (전통 구어)|Pharmacy|RAA-yih il-a-gaz-KHA-na|약국에 다녀올게요
+بَاتِيه|ba-TEH|바티|크루아상, 페이스트리 빵|Pâté|ba-TEH bil-GIB-na|치즈 크루아상 빵
+جَرْسُون|gar-SON|가르손|웨이터|Waiter|ya gar-SON, law sa-MAHT|웨이터님, 여기요
+صَالُون|sa-LON|살론|거실, 살롱|Salon, Living room|it-FAD-dal fis-sa-LON|거실로 들어오세요
+بَلْكُونَة|bal-KO-na|발코나|발코니, 베란다|Balcony|'AA-'id fil-bal-KO-na|발코니에 앉아 있어요
+جُمْرُك|GOM-ruk|곰루크|세관, 관세|Customs|kha-RAGT min il-GOM-ruk|세관을 통과해 나왔어요
+شَانْس|SHAANS|샨스|기회, 행운|Chance, Luck|gat li SHAANS HIL-wa|좋은 기회가 찾아왔어요
+أَبَاجُورَة|a-ba-GOO-ra|아바구라|스탠드 조명, 전등갓|Lampshade|WAL-la' il-a-ba-GOO-ra|스탠드 조명 켜
+دُكْتُور|duk-TOOR|둑투르|의사 선생님, 박사|Doctor|shoof id-duk-TOOR|의사 선생님께 진료받아
+بَنْزِين|ban-ZEEN|반진|휘발유, 기름|Gasoline, Petrol|'a-ra-bey-YA-ti 'AAY-za ban-ZEEN|차에 기름을 넣어야 해요
+بَنْزِينَة|ban-ZEE-na|반지나|주유소|Gas station|A'-rab ban-ZEE-na feen?|가장 가까운 주유소가 어디예요?
+عَجَلَة|'A-ga-la|아갈라|바퀴, 타이어, 자전거|Wheel, Bike|'A-ga-lit il-'a-ra-BEY-ya NAY-ma|타이어 바람이 빠졌어요
+كَاوِتْش|ka-WITSH|카위트쉬|고무 타이어|Rubber tire|ghay-YART il-ka-WITSH|타이어를 교체했어요
+مِيكَانِيكِي|mi-ka-NEE-ki|미카니키|자동차 정비사|Mechanic|ruht lil-mi-ka-NEE-ki|카센터 정비사에게 갔어요
+فَرَامِل|fa-RAA-mil|파라밀|브레이크|Brakes|i-DOOS fa-RAA-mil|브레이크를 밟으세요
+زِيت مَاتُور|ZEET ma-TOOR|지트 마투르|엔진오일|Motor oil|'AA-yiz a-GHAY-yar ZEET il-ma-TOOR|엔진오일 교환하고 싶어요
+بَطَّارِيَّة|bat-ta-REY-ya|바트타리야|차량 배터리|Battery|bat-ta-REY-yit il-'a-ra-BEY-ya NA-mit|배터리가 방전됐어요
+غَسِيل عَرَبِيَّات|gha-SEEL 'a-ra-bey-YAAT|가실 아라비얏|세차|Car wash|ma-HAT-tit gha-SEEL 'a-ra-bey-YAAT|세차장
+كَلَاكْس|k-LAKS|클락스|자동차 경적, 클랙슨|Car horn|ID-rab k-LAKS|경적을 울리세요
+قَابِل / يِقَابِل|'AA-bil / yi-'AA-bil|아빌 / 이아빌|만나다|Meet|ha-'AB-lak 'IND il-ma-HAT-ta|정류장에서 만날게요
+سَلِّم / يِسَلِّم|sal-lim / yi-SAL-lim|살림 / 이살림|인사하다, 건네다|Greet, Hand over|SAL-lim li 'a-LEEH|그 사람에게 안부 전해줘
+فَرَّق / يِفَرَّق|far-ra' / yi-FAR-ra'|파르라으 / 이파르라으|구별하다, 나누다|Differentiate|mish 'AA-rif a-FAR-ra' bay-nu-hum|둘을 구별 못 하겠어요
+جَاوِب / يِجَاوِب|GAA-wib / yi-GAA-wib|가윕 / 이가윕|답하다, 답변하다|Answer, Reply|GAA-wib 'a-las-su-'AAL|질문에 답변해 주세요
+عَزَم / يِعْزِم|'A-zam / YI'-zim|아잠 / 이으짐|초대하다, 한턱내다|Invite, Treat|A-na 'AZ-mak 'a-lal-GHA-da|점심은 내가 쏠게
+دَعَا / يِدْعِي|DA-'a / YID-'i|다아 / 이드이|기도하다, 축복을 빌다|Pray for|bad-'EE lak bit-taw-FEE'|성공하길 기도할게요
+مَدَح / يِمْدَح|MA-dah / YIM-dah|마다흐 / 임다흐|칭찬하다|Praise|il-mu-DEER MA-dah fee SHUGH-lak|매니저님이 네 일을 칭찬했어
+عَدَّى / يِعَدِّي|'ad-da / yi-'AD-di|앗다 / 이앗디|건너다, 들르다|Cross, Drop by|ha-'AD-di 'a-LEEK BUK-ra|내일 너희 집에 들를게
+رَفَع / يِرْفَع|RA-fa' / YIR-fa'|라파으 / 이르파으|올리다, 높이다|Raise, Lift|IR-fa' SOW-tak shu-WAY-ya|목소리 조금만 높여줘
+نَزِّل / يِنَزِّل|naz-zil / yi-NAZ-zil|나즈질 / 이나즈질|내리다, 다운로드하다|Lower, Drop off|naz-ZIL-ni HI-na law sa-MAHT|저 여기 내려주세요
+وَاتْسَاب|WATS-ab|왓츠압|왓츠앱 메신저|WhatsApp|IB-'at li 'a-lal-WATS-ab|왓츠앱으로 보내줘
+مِسِج|ME-seg|메세지|문자 메시지|Message|gat li ME-seg|문자가 하나 왔어요
+بَاسْوُورْد|bas-WORD|바스워드|비밀번호, 암호|Password|bas-WORD il-WAY-fay eh?|와이파이 비번이 뭐예요?
+وَاي فَاي|WAY-fay|와이파이|와이파이 무선인터넷|Wi-Fi|ish-SHA-ba-ka fee-ha WAY-fay|매장에 와이파이 있나요?
+شَاحِن|SHAA-hin|샤힌|충전기|Charger|ma-'AAK SHAA-hin type C?|C타입 충전기 있나요?
+سَمَّاعَة|sam-MAA-'a|삼마아|이어폰, 스피커|Earphones, Speaker|HA-tit is-sam-MAA-'a|이어폰을 끼고 있어요
+شَاشَة|SHAA-sha|샤샤|화면, 액정|Screen, Display|SHAA-shit il-mo-BAAYL it-KA-sa-rit|휴대폰 액정이 깨졌어요
+شَرِيحَة|sha-REE-ha|샤리하|유심칩, SIM 카드|SIM card|'AA-yiz sha-REE-ha Vodafone|보다폰 유심칩 주세요
+مَكْسُور|mak-SOOR|마크수르|깨진, 고장 난|Broken|ish-SHAA-hin da mak-SOOR|이 충전기 고장 났어요
+سِلِيم|si-LEEM|실림|온전한, 멀쩡한|Intact, Safe|il-ham-du lil-LAAH KUL-lu si-LEEM|다행히 다 멀쩡해요
+يَا سَلَام|ya sa-LAAM|야 살람|와 대단하다!, 세상에!|Wow!|ya sa-LAAM 'a-lal-ga-MAAL!|와, 정말 아름답네요!
+يَا خَبَر|ya KHA-bar|야 카바르|맙소사!, 어머나!|Good grief!|ya KHA-bar AB-yad!|세상에 맙소사!
+حَرَام|ha-RAAM|하람|안타깝다, 불쌍해라|What a pity|ha-RAAM 'a-LEEK|그러지 마, 너무하네
+حَلَال|ha-LAAL|할랄|떳떳한, 정당한|Well-deserved|ha-LAAL 'a-LEEK|네가 가질 자격이 있어
+خَسَارَة|kha-SAA-ra|카사라|아깝다, 아쉽다|What a waste, Pity|ya kha-SAA-ra, mal-hi'-TOOSH|아깝다, 놓쳐버렸네
+مَا شَاءَ الله|ma shaa' al-LAAH|마샤알라|훌륭하네요, 감탄스러워요|Wonderful|ma shaa' al-LAAH, SHUGHL ku-WAY-yis|정말 훌륭하게 잘했네요
+صَلِّي عَالنَّبِي|SAL-li 'an-NA-bi|살리 안나비|진정하세요, 침착하세요|Calm down|SAL-li 'an-NA-bi w-IH-da|흥분 가라앉히고 진정하세요
+عِيب|EEB|이브|부끄러운 짓이야|Shameful, Rude|EEB KI-da, mat-'I-milsh KI-da|예의가 아니야, 그러지 마
+بَرَاوَة|ba-RAA-wa|바라와|잘했어! 브라보!|Bravo, Well done|ba-RAA-wa 'a-LEEK ya BA-sha|대장님, 아주 잘하셨어요!
+مِيَّة مِيَّة|MEY-ya MEY-ya|미이야 미이야|100점 만점에 100점!|100%, Perfect|KUL-lu ta-MAAM MEY-ya MEY-ya|모든 게 100% 완벽해요!`,
+11:`
+عَصِير|'a-SEER|아시르|주스, 생과일주스|Juice|ma-HALL 'a-SEER 'u-RAY-yib|근처에 생과일주스 가게가 있어요
+قَصَب|'A-sab|아삽|사탕수수 주스|Sugarcane juice|koo-BAA-yit 'a-SEER 'A-sab|사탕수수 주스 한 잔
+كَرْكَدِيه|kar-ka-DEEH|카르카디|히비스커스 티|Hibiscus tea|kar-ka-DEEH SAA-'i'|시원한 히비스커스 티
+سَحْلَب|SAH-lab|사흘랍|사흘랍 (따뜻한 우유 푸딩 음료)|Sahlab|SAH-lab bil-mu-kas-sa-RAAT|견과류를 얹은 사흘랍
+لَمُون بِالنَّعْنَاع|la-MOON bin-na'-NAA'|라문 빈나으낭|레몬 민트 주스|Lemon mint juice|'a-SEER la-MOON bin-na'-NAA'|레몬 민트 주스
+تَمْر هِنْدِي|TAMR HIN-di|타므르 힌디|타마린드 주스|Tamarind drink|TAMR HIN-di maz-BOOT|알맞게 달콤한 타마린드 주스
+يَانْسُون|yan-SOON|얀순|아니스 허브티|Anise herbal tea|yan-SOON sukhn liz-ZOWR|목에 좋은 따뜻한 아니스티
+جَوَافَة|ga-WAA-fa|가와파|구아바|Guava|'a-SEER ga-WAA-fa bi-LA-ban|우유 넣은 구아바 주스
+رُمَّان|rum-MAAN|룸만|석류|Pomegranate|'a-SEER rum-MAAN TAA-za|신선한 생석류 주스
+شُوكُولَاتَة|sho-ko-LAA-ta|쇼콜라타|초콜릿|Chocolate|KEE-ka bish-sho-ko-LAA-ta|초콜릿 케이크
+طَرْد|TARD|타르드|택배 소포, 화물|Parcel, Package|feeh TARD WA-sal b-IS-mak|당신 이름으로 택배가 도착했어요
+جَوَاز سَفَر|ga-WAAZ sa-far|가와즈 사파르|여권|Passport|SOO-rit ga-WAAZ is-sa-far|여권 사본
+إِقَامَة|i-'AA-ma|이아마|체류 허가, 거주 비자|Residency visa|tag-DEED il-i-'AA-ma|체류 비자 연장
+صُورَة طِبْق الأَصْل|SOO-ra tib'-il-ASL|수라 티브이일아슬|공증 사본|Certified true copy|'AA-yiz SOO-ra tib'-il-ASL|원본 대조필 사본이 필요해요
+طَابَع|TAA-ba'|타바으|수입인지, 우표|Revenue stamp|TAA-ba' DAM-gha|행정 수입인지
+اِسْتِمَارَة|is-ti-MAA-ra|스티마라|신청서, 서식|Application form|IM-la il-is-ti-MAA-ra di|이 신청서를 작성하세요
+تَوْقِيع|taw-QEE'|타우이으|서명, 사인|Signature|it-taw-QEE' HI-na law sa-MAHT|여기에 서명해 주세요
+بِطَاقَة|bi-TAA-'a|비타아|신분증, 카드|ID card, Card|bi-TAA-'it ir-RA-qam il-QOW-mi|이집트 신분증
+تَجْدِيد|tag-DEED|타그디드|갱신, 연장|Renewal, Extension|tag-DEED ir-ROKH-sa|면허증 갱신
+مَصْلَحَة|mas-LA-ha|마슬라하|관공서, 행정청|Government bureau|mas-LA-hit ig-ga-wa-ZAAT|이민국, 여권청
+جَهِّز / يِجَهِّز|gah-hiz / yi-GAH-hiz|가흐히즈 / 이가흐히즈|준비하다, 마련하다|Prepare|GAH-hiz ish-SHAN-ta|가방 싸서 준비해
+اِتْأَكِّد / يِتْأَكِّد|it-'ak-kid / yit-'AK-kid|잇아크키드 / 이트아크키드|확인하다, 점검하다|Make sure|it-'AK-kid min il-mee-'AAD|약속 시간을 다시 확인해봐
+اِتَّصَل / يِتِّصِل|it-TA-sal / yit-TI-sil|잇타살 / 이티실|전화하다, 연락하다|Call, Contact|hat-TI-sil beek ba'-DEEN|나중에 전화할게
+قَفِّل / يِقَفِّل|'af-fil / yi-'AF-fil|아프필 / 이아프필|단단히 잠그다|Lock tightly|'AF-fil il-BAAB ku-WAY-yis|문을 단단히 잠그세요
+سَلِّف / يِسَلِّف|sal-lif / yi-SAL-lif|살리프 / 이살리프|빌려주다|Lend|MUM-kin ti-SAL-lif-ni 'A-lam?|펜 좀 빌려주실 수 있나요?
+اِسْتَلَف / يِسْتِلِف|is-TA-laf / yis-TA-lif|이스타라프 / 이스타리프|빌리다|Borrow|is-ta-LAFT fu-LOOS min SAH-bi|친구에게 돈을 빌렸어요
+حَاسِب / يِحَاسِب|HAA-sib / yi-HAA-sib|하시브 / 이하시브|계산하다, 주의하다|Pay, Watch out|HAA-sib, feeh 'a-ra-BEY-ya!|조심해, 차 온다!
+وَرَّى / يِوَرِّي|war-ra / yi-WAR-ri|와르라 / 이와르리|보여주다, 알려주다|Show|war-REE-ni it-ta-REE'|길 좀 알려주세요
+خَلَّص / يِخَلَّص|khal-las / yi-KHAL-las|칼라스 / 이칼라스|끝마치다, 처리하다|Finish, Settle|khal-LAST SHUGH-li|내 일 다 끝마쳤어요
+فَكَّر / يِفَكَّر|fak-kar / yi-FAK-kar|파크카르 / 이파크카르|곰곰이 생각하다|Ponder, Think|FAK-kar ku-WAY-yis 'abl ma ti-'AR-rar|결정 전에 잘 생각해봐
+سَبَّاك|sab-BAAK|삽바크|배관공|Plumber|'AA-yiz sab-BAAK da-ROO-ri|배관공이 급히 필요해요
+كَهْرَبَائِي|kah-ra-BAA-'i|카흐라바이|전기 기술자|Electrician|il-kah-ra-BAA-'i SAL-lah in-NOOR|전기기사가 조명을 고쳤어요
+نَجَّار|nag-GAAR|나그가르|목수, 가구 수리공|Carpenter|in-nag-GAAR SAL-lah il-BAAB|목수가 문을 고쳤어요
+مَسْمَار|mas-MAAR|마스마르|못, 나사|Nail, Screw|du'' il-mas-MAAR HI-na|여기에 못을 박으세요
+شَاكُوش|sha-KOOSH|샤쿠쉬|망치|Hammer|haat ish-sha-KOOSH|망치 좀 가져다줘
+مَفَكّ|ma-FAKK|마파크|드라이버|Screwdriver|ma-FAKK su-GHAY-yar|작은 드라이버
+دِهَان|de-HAAN|디한|페인트, 도색|Paint|lown id-de-HAAN hilw|페인트 색상이 예쁘네요
+نَقَّاش|na'-'AASH|나아쉬|페인트 도색 기술자|House painter|in-na'-'AASH bi-YID-han il-OO-da|도색공이 방을 칠하고 있어요
+بَلَاط|ba-LAAT|발라트|바닥 타일, 대리석|Tiles, Flooring|ba-LAAT is-se-ra-MEEK|세라믹 바닥 타일
+حِيطَة|HEE-ta|히타|벽, 담장|Wall|'AL-li' is-SOO-ra 'a-lal-HEE-ta|벽에 사진을 걸어두세요
+مَحْفَظَة|MAH-fa-za|마흐파자|지갑|Wallet, Purse|ni-SEET il-MAH-fa-za fil-BEET|집에 지갑을 두고 왔어요
+شَمْسِيَّة|sham-SEY-ya|샴시야|우산, 양산|Umbrella, Parasol|khud ish-sham-SEY-ya ma-'AAK|우산 챙겨가
+وَلَّاعَة|wal-LAA-'a|왈라아|라이터|Lighter|ma-'AAK wal-LAA-'a?|라이터 가지고 계신가요?
+كِبْرِيت|kib-REET|키브리트|성냥|Matches|'IL-bit kib-REET|성냥 한 갑
+لِبَان|le-BAAN|리반|껌, 유향 껌|Chewing gum|BA-ko le-BAAN|껌 한 통
+مِشْط|MESHT|메슈트|머리빗|Comb|SAR-rah SHA'-rak bil-MESHT|빗으로 머리를 빗으세요
+قَصَّافَة|'as-SAA-fa|아스사파|손톱깎이|Nail clippers|'as-SAA-fit a-ZAA-fir|손톱깎이
+لَصْقَة|LAS-'a|라스아|반창고, 밴드|Band-aid, Plaster|hott LAS-'a 'a-lal-GARH|상처에 밴드를 붙이세요
+كِيس|KEES|키스|비닐봉지, 쇼핑백|Plastic bag|hott il-HAA-ga fee kees|물건을 봉지에 넣어주세요
+حَبْل|HABL|하블|밧줄, 빨랫줄, 끈|Rope, Cord|HABL gha-SEEL|빨랫줄`,
+12:`
+قِطَّة|'ET-ta|잇타|고양이|Cat|feeh 'ET-ta su-GHAY-ya-ra|작은 고양이가 있어요
+كَلْب|KALB|칼브|개, 강아지|Dog|il-KALB da a-LEEF|이 개는 순해요
+جَمَل|GA-mal|가말|낙타|Camel|ri-KIBT ig-GA-mal 'IND il-ah-ra-MAAT|피라미드에서 낙타를 탔어요
+حُصَان|ho-SAAN|호산|말|Horse|hon-TOOR bi-ho-SAAN|말이 끄는 마차
+حِمَار|he-MAAR|히마르|당나귀|Donkey|'a-ra-BEY-ya KAR-ro bi-he-MAAR|당나귀 수레
+حَمَام|ha-MAAM|하맘|비둘기|Pigeon, Dove|ha-MAAM mah-SHI ruzz|쌀을 채워 구운 비둘기 요리
+عُصْفُور|'os-FOOR|오스푸르|참새, 작은 새|Bird, Sparrow|'os-FOOR bi-yigh-AN-ni|새가 노래하고 있어요
+سَمَك|SA-mak|사마크|물고기, 생선 요리|Fish|MAT-'am SA-mak mash-HOOR|유명한 생선 요리 전문점
+نَمْل|NAML|남블|개미|Ants|feeh NAML fil-MAT-bakh|주방에 개미가 있어요
+نَامُوس|na-MOOS|나무스|모기|Mosquitoes|in-na-MOOS bi-YI'-rus|모기가 물어요
+كَمُّون|kam-MOON|캄문|큐민, 커민|Cumin|KOSH-a-ri bi-kam-MOON ze-YAA-da|큐민을 듬뿍 넣은 코샤리
+فِلْفِل أَسْوَد|FIL-fil AS-wad|필필 아스와드|검은 후추|Black pepper|RISH-shit FIL-fil AS-wad|검은 후추 한 꼬집
+قِرْفَة|'ER-fa|이르파|계피, 시나몬|Cinnamon|shaay bil-'ER-fa|계피차
+جَنْزَبِيل|gan-za-BEEL|간자빌|생강|Ginger|la-MOON bil-gan-za-BEEL|레몬 생강차
+زَعْتَر|ZA'-tar|자으타르|자타르 허브|Za'atar, Thyme|'eesh biz-ZA'-tar|자타르를 뿌린 빵
+شَطَّة|SHAT-ta|샷타|고춧가루, 매운 칠리|Chili powder|min GHEER SHAT-ta|고춧가루/매운맛 빼고 주세요
+طَحِينَة|ta-HEE-na|타히나|타히니 (참깨소스)|Tahini paste|sa-LA-tit ta-HEE-na|참깨 타히나 샐러드
+عَسَل|'A-sal|아살|꿀|Honey|'A-sal NAHL AB-yad|순수 벌꿀
+زِبْدَة|ZIB-da|지브다|버터|Butter|'eesh biz-ZIB-da|버터 바른 빵
+سَمْنَة|SAM-na|삼나|기 버터, 정제 버터|Ghee, Butter|SAM-na BA-la-di|이집트 전통 천연 정제버터
+اِخْتَار / يِخْتَار|ikh-TAAR / yikh-TAAR|익타르 / 이크타르|고르다, 선택하다|Choose, Select|ikh-TAAR il-li yi'-GI-bak|마음에 드는 걸로 골라봐
+وَعَد / يِوْعِد|WA-'ad / YIW-'id|와아드 / 이우이드|약속하다|Promise|A-na bow-'I-dak|내가 너에게 약속할게
+بَصّ / يِبُصّ|bass / yi-BOSS|바쓰 / 이보쓰|보다, 쳐다보다|Look at|buss HI-na law sa-MAHT|여기 좀 봐주세요
+مَسَك / يِمْسِك|MA-sak / YIM-sik|마사크 / 임시크|잡다, 쥐다|Hold, Catch|IM-sik da SAN-ya|이거 잠깐 들고 있어줘
+رَمَى / يِرْمِي|RA-ma / YIR-mi|라마 / 이르미|던지다, 버리다|Throw, Discard|ir-MEEH fiz-zi-BAA-la|쓰레기통에 버려
+ضَرَب / يِضْرَب|DA-rab / YID-rab|다라브 / 이드라브|때리다, 치다, 울리다|Hit, Ring|il-GA-ras bi-YID-rab|벨이 울리고 있어요
+كَرَّر / يِكَرَّر|kar-rir / yi-KAR-rir|카르리르 / 이카르리르|반복하다|Repeat|kar-RIR il-KIL-ma TAA-ni|단어를 다시 반복해봐
+حَفَظ / يِحْفَظ|HA-faz / YIH-faz|하파즈 / 이흐파즈|외우다, 보관하다|Memorize, Keep|ha-FIZT il-ka-li-MAAT|단어들을 다 외웠어요
+بَاع / يِبِيع|baa' / yi-BEE'|바으 / 이비으|팔다, 판매하다|Sell|bi-yi-BEE' FAK-ha HI-na|여기서 과일을 팔아요
+دَاق / يِدُوق|daaq / yi-DOO'|다크 / 이두으|맛보다|Taste|doo' il-AKL da|이 음식 한번 맛봐
+فُنْدُق|FUN-du'|푼두으|호텔|Hotel|A'-rab FUN-du' HI-na|여기서 가장 가까운 호텔
+رِيسِبْشَن|ri-SEP-shan|리셉션|프런트 데스크|Reception|KAL-lim ir-ri-SEP-shan|프런트에 전화해 봐
+حَجْز|HAGZ|하그즈|예약|Reservation, Booking|'IN-di HAGZ b-IS-mi|제 이름으로 예약이 있어요
+خِدْمِة غُرَف|KHID-mit GHO-raf|키드미트 고라프|룸서비스|Room service|IT-lub KHID-mit il-GHO-raf|룸서비스를 주문하세요
+حَمَّام سِبَاحَة|ham-MAAM se-BAA-ha|함맘 시바하|수영장|Swimming pool|ham-MAAM se-BAA-ha maf-TOOH|야외 수영장이 열려 있어요
+كَارْت غُرْفَة|KART GHOR-fa|카르트 고르파|객실 카드키|Room key card|ni-SEET KART il-GHOR-fa|카드키를 두고 나왔어요
+شِيك إِن|sheek IN|시크인|체크인|Check-in|mee-'AAD ish-sheek IN is-SAA-'a it-NEEN|체크인 시간은 2시입니다
+شِيك آوْت|sheek OWT|시크아우트|체크아웃|Check-out|'a-MALT ish-sheek OWT|체크아웃을 완료했어요
+جِيم|GEEM|짐|헬스장, 피트니스|Gym|feeh GEEM fil-FUN-du'?|호텔에 헬스장이 있나요?
+إِطْلَالَة|it-LAA-la|이틀랄라|전망, 뷰|View, Overlook|it-LAA-la 'a-lal-ah-ra-MAAT|피라미드 뷰 전망
+لَوْ|LAW|라우|만약 ~라면|If|LAW 'AA-yiz HAA-ga 'ool li|필요한 게 있다면 말해줘
+لَمَّا|LAM-ma|람마|~할 때|When|LAM-ma TIW-sal KAL-lim-ni|도착하면 전화해
+قَبْل مَا|'ABL ma|아블 마|~하기 전에|Before|'ABL ma TIM-shi|출발하기 전에
+بَعْد مَا|BA'D ma|바으드 마|~한 후에|After|BA'D ma AA-kul|밥 먹은 후에
+مِنْ غِير|min GHEER|민 기르|~없이|Without|min GHEER ka-LAAM|말없이
+مَعَ|MA-'a|마아|~와 함께|With|A-na ma-'AAK|난 너와 함께 있어 / 네 편이야
+مَادَام|ma-DAAM|마담|~인 이상, 어차피|As long as, Since|ma-DAAM IN-ta HI-na|당신이 여기 있는 이상
+غِير كِدَه|GHEER KI-da|기르 키다|그 밖에도, 게다가|Besides that|ma-FEESH GHEER KI-da|그 밖에는 더 없어요
+يَا رِيت|ya REET|야 리트|그러면 얼마나 좋을까!|I wish|ya REET TEE-gi ma-'AA-na|너도 같이 가면 참 좋을 텐데!
+شُوف|SHOOF|슈프|자 봐봐, 들어봐|Look, See!|SHOOF ya SEE-di|자 들어보세요, 선생님`,
+13:`
+شَعْر|SHA'R|샤으르|머리카락, 털|Hair|SHA'R 'u-SAY-yar|짧은 머리
+دَقْن|DA'N|다은|턱수염, 턱|Beard, Chin|HA-la' DA'-nu|턱수염을 면도했어요
+شَنَب|SHA-nab|샤납|콧수염|Mustache|SHA-nab ki-BEER|짙은 콧수염
+حَلَّاق|hal-LAA'|할라으|이발사, 이발소|Barber, Shop|RAA-yih lil-hal-LAA'|이발소 가는 길이에요
+قَصّ / يِقُصّ|'ass / yi-'OSS|아쓰 / 이오쓰|자르다, 다듬다|Cut, Trim|'oss SHA'-ri shu-WAY-ya|머리 조금만 다듬어 주세요
+سِشْوَار|sish-WAAR|시슈와르|헤어드라이어|Hairdryer|NASH-shif SHA'-rak bis-sish-WAAR|드라이어로 머리를 말려
+حِلَاقَة|he-LAA-'a|힐라아|면도, 이발|Shaving, Haircut|MA-ka-nit he-LAA-'a|면도기
+وِشّ|WISHSH|위쉬|얼굴|Face|IGH-sil WISH-shak|얼굴을 씻으세요
+سِنَان|si-NAAN|시난|치아, 이빨|Teeth|gha-SALT si-NAA-ni|양치질을 했어요
+لِسَان|le-SAAN|리산|혀, 말솜씨|Tongue, Speech|le-SAA-nu HILW|말솜씨가 참 좋아요
+حِزَام|he-ZAAM|히잠|벨트, 허리띠|Belt|IR-but il-he-ZAAM|안전벨트를 매세요
+شَرَاب|sha-RAAB|샤랍|양말|Socks|gowz sha-RAAB|양말 한 켤레
+زُرَار|zo-RAAR|조라르|단추, 버튼|Button|iz-zo-RAAR WA-'a'|단추가 떨어졌어요
+سُوسْتَة|SOOS-ta|수스타|지퍼, 스프링|Zipper|I'-fil is-SOOS-ta|지퍼를 올리세요
+جِيب|GEEB|기브|주머니, 포켓|Pocket|hott il-fu-LOOS fee GEE-bak|돈을 주머니에 넣어
+طَرْحَة|TAR-ha|타르하|히잡, 머리 스카프|Headscarf|TAR-ha ha-REER|실크 스카프
+طَاقِيَّة|ta-'EY-ya|타이야|모자|Cap, Hat|IL-bis ta-'EY-ya|모자를 쓰세요
+مَكْوَجِي|mak-WA-gi|마크와기|세탁소 다림질사|Laundry presser|IB-'at il-'a-MEES lil-mak-WA-gi|셔츠를 다림질사에게 보내
+مَغْسَلَة|MAGH-sa-la|마그살라|세탁소, 빨래방|Laundry|RAA-yih il-MAGH-sa-la|세탁소에 가는 길이에요
+كَرَافَتَّة|kra-VAT-ta|크라바트타|넥타이|Necktie|kra-VAT-ta sheek|세련된 넥타이
+لَغَى / يِلْغِي|LA-gha / YIL-ghi|라가 / 일기|취소하다|Cancel|la-GHEET il-HAGZ|예약을 취소했어요
+اِتَّفَق / يِتِّفِق|it-TA-fa' / yit-TI-fi'|잇타파으 / 이티피으|합의하다, 동의하다|Agree, Settle|it-ta-FA'-na 'a-las-SI'R|가격에 합의했어요
+صَرَف / يِصْرِف|SA-raf / YIS-rif|사라프 / 이스리프|돈을 쓰다|Spend money|bi-YIS-rif fu-LOOS ki-TEER|돈을 많이 써요
+حَوِّش / يِحَوِّش|haw-wish / yi-HAW-wish|하우위쉬 / 이하우위쉬|저축하다, 돈을 모으다|Save money|ba-HAW-wish lir-RIH-la|여행 경비를 모으고 있어요
+قَاس / يِقِيس|'aas / yi-'EES|아스 / 이이스|입어보다, 치수를 재다|Try on|MUM-kin a-'EES da?|이거 한번 입어봐도 될까요?
+وَزَن / يِوْزِن|WA-zan / YIW-zin|와잔 / 이우진|무게를 달다|Weigh|IW-zin li KEE-lo|1kg 달아주세요
+سَجِّل / يِسَجِّل|sag-gil / yi-SAG-gil|사그길 / 이사그길|등록하다, 녹음하다|Register|SAG-gil IS-mak HI-na|여기에 성함을 적어주세요
+نَجَح / يِنْجَح|NA-gah / YIN-gah|나가흐 / 인가흐|합격하다, 성공하다|Pass, Succeed|na-GAHT fil-im-ti-HAAN|시험에 합격했어요
+سَقَط / يِسْقُط|SA-'at / YIS-'ut|사아트 / 이스우트|떨어지다, 불합격하다|Fall, Fail|il-ma-fa-TEEH SA-'a-tit|열쇠가 떨어졌어요
+ضَمَن / يِضْمَن|DA-man / YID-man|다만 / 이드만|보증하다, 보장하다|Guarantee|A-na AD-man lak da|내가 이거 보증할게
+أَصْلِي|AS-li|아슬리|정품의, 진짜의|Original, Genuine|'E-ta' ghe-YAAR as-LEY-ya|정품 교체 부품
+تَقْلِيد|ta'-LEED|타으리드|모조품, 이미테이션|Imitation, Copy|da mish AS-li, ta'-LEED|이건 정품이 아니라 모조품이에요
+ضَمَان|da-MAAN|다만|품질 보증서, 워런티|Warranty|'a-LEEH da-MAAN SA-na|1년 무상 보증이 포함돼요
+مَضْمُون|mad-MOON|마드문|확실한, 믿을 수 있는|Reliable|ma-HALL mad-MOON|믿을 수 있는 매장
+بَلَاش|bi-LAASH|빌라쉬|공짜, 무료|Free, For nothing|da bi-ba-LAASH?|이거 공짜인가요?
+مَجَّانًا|mag-GAA-nan|마그가난|무료로, 공짜로|Free of charge|it-taw-SEEL mag-GAA-nan|무료 배송
+عُمْلَة|'OM-la|옴라|화폐, 통화|Currency|'OM-la mas-REY-ya|이집트 통화
+دُولَار|do-LAAR|둘라르|미국 달러|US Dollar|SI'R id-do-LAAR in-na-HAR-da|오늘의 달러 환율
+يُورُو|YO-ro|요로|유로화|Euro|ma-'AA-ya MEY-ya YO-ro|100유로 가지고 있어요
+سِعْر|SI'R|시으르|가격, 시세|Price, Rate|SI'R ku-WAY-yis|좋은 가격
+يَا سِيدِي|ya SEE-di|야 시디|선생님, 친구여|My friend, Sir|SHUK-ran ya SEE-di|감사합니다, 선생님
+يَا عَمّ|ya 'AMM|야 암|아저씨, 이보게|Mister, Pal|ya 'AMM, 'a-la RAA-si|아저씨, 기꺼이 해드리지요
+عَلَى رَاسِي|'a-la RAA-si|알라 라시|기꺼이 해드리지요|With pleasure|ta-LA-bak 'a-la RAA-si|부탁하신 일 기꺼이 모시겠습니다
+خِدْمَة|KHID-ma|키드마|부탁, 서비스, 호의|Favor, Service|MUM-kin KHID-ma su-GHAY-ya-ra?|작은 부탁 하나 드려도 될까요?
+كَرَم|KA-ram|카람|관대함, 후한 인심|Generosity|KA-ram AHL masr|이집트 사람들의 후한 인심
+كَرِيم|ka-REEM|카림|관대한, 후한|Generous, Noble|al-LAAH AK-ram|하나님께서 더 관대하십니다
+زِيَارَة|ze-YAA-ra|지야라|방문|Visit|SHUK-ran 'a-laz-ze-YAA-ra|방문해 주셔서 감사합니다
+أَمَان|a-MAAN|아만|안전, 안심|Safety, Security|il-ma-KAAN HI-na feeh a-MAAN|이곳은 안전해요
+فِي أَمَان الله|fee a-MAAN il-LAAH|피 아만 일라|안녕히 가세요|In God's safety|ma'a is-sa-LAA-ma, fee a-MAAN il-LAAH|안녕히 가세요, 평안하시길
+فُرْصَة سَعِيدَة|FUR-sa sa-'EE-da|푸르사 사이이다|만나 뵙게 되어 기뻤습니다|Nice to meet|FUR-sa sa-'EE-da GID-dan|만나서 정말 반가웠습니다`,
+14:`
+حُقْنَة|HO'-na|호으나|주사, 주사기|Injection, Shot|a-KHADT HO'-na lis-su-khoo-NEY-ya|해열 주사를 맞았어요
+قُرْص|QURS|오르스|알약, 타블렛|Pill, Tablet|khud 'ur-SEEN ba'd il-AKL|식후에 두 알 드세요
+مَرْهَم|MAR-ham|마르함|연고, 크림|Ointment, Cream|hott MAR-ham 'a-lal-GILD|피부에 연고를 바르세요
+قَطْرَة|'AT-ra|아트라|안약, 점안액|Eye drops|'AT-ra lil-'EEN|눈에 넣는 안약
+فِيتَامِين|vi-ta-MEEN|비타민|비타민, 영양제|Vitamin|vi-ta-MEEN C|비타민 C
+رُوشِتَّة|ro-SHET-ta|로셰트타|처방전|Prescription|id-DA-wa mak-TOOB fir-ro-SHET-ta|처방전에 약이 적혀 있어요
+حَسَاسِيَّة|ha-sa-SEY-ya|하사시야|알레르기, 비염|Allergy|'IN-di ha-sa-SEY-ya min il-fa-RAW-la|딸기 알레르기가 있어요
+زُكَام|zo-KAAM|조캄|감기, 코감기|Cold, Flu|'IN-di zo-KAAM sha-DEED|감기에 심하게 걸렸어요
+كُحَّة|KAH-ha|카흐하|기침|Cough|DA-wa lil-KAH-ha|기침약
+تِرْمُومِتْر|tar-mo-MET-r|타르모메트르|체온계|Thermometer|'ees il-ha-RAA-ra bit-tar-mo-MET-r|체온계로 열을 재세요
+إِيجَار|ee-GAAR|이가르|월세, 렌트비|Rent|ee-GAAR ish-SHAHR da|이번 달 월세
+عَقْد|'A'D|아으드|계약서, 계약|Contract|ka-TAB-na 'A'D il-BEET|집 계약서를 썼어요
+تَأْمِين|ta'-MEEN|타민|보증금, 보험|Deposit, Insurance|shah-REEN ta'-MEEN|두 달 치 보증금
+سِمْسَار|sem-SAAR|셈사르|부동산 중개인|Real estate broker|is-sem-SAAR far-RAG-ni 'a-lash-SHA'-'a|중개인이 집을 보여줬어요
+مَفْرُوش|maf-ROOSH|마프루쉬|풀옵션 완비의|Furnished|SHA'-'a maf-ROO-sha|풀옵션 아파트
+خَالِي|KHA-li|칼리|비어 있는, 공실의|Vacant, Empty|ish-SHA'-'a KHAL-ya dil-WA'-ti|아파트가 지금 비어 있어요
+صَاحِب البِيت|SAH-bil-BEET|사흐빌비트|집주인, 건물주|Landlord|kal-LIMT SAH-bil-BEET|집주인과 통화했어요
+سَاكِن|SA-kin|사킨|세입자, 거주자|Tenant, Resident|is-SA-kin ig-ga-DEED|새로운 세입자
+مَدْخَل|MAD-khal|마드칼|현관, 건물 입구|Entrance|MAD-khal il-'e-MAA-ra ni-DEEF|건물 입구가 깨끗해요
+سِلِّم|SIL-lim|실림|계단, 사다리|Stairs, Ladder|IT-la' 'a-las-SIL-lim|계단으로 올라오세요
+طَبَع / يِطْبَع|TA-ba' / YIT-ba'|타바으 / 이트바으|인쇄하다, 출력하다|Print|IT-ba' li il-WA-ra-'a di|이 서류 출력해 주세요
+نَسَخ / يِنْسَخ|NA-sakh / YIN-sakh|나사크 / 인사크|복사하다|Copy, Photocopy|'AA-yiz AN-sakh ig-ga-WAAZ|여권 복사하고 싶어요
+رَتِّب / يِرَتِّب|rat-tib / yi-RAT-tib|라트팁 / 이라트팁|정리하다, 정돈하다|Tidy, Arrange|RAT-tib il-OO-da|방을 정돈해 줘
+مَلَا / يِمْلَا|MA-la / YIM-la|말라 / 임라|채우다, 물을 받다|Fill up|IM-la il-e-ZAA-za MAY-ya|병에 물을 채우세요
+فَضَّى / يِفَضِّي|fad-da / yi-FAD-di|팟다 / 이팟디|비우다|Empty out|FAD-di ish-SHAN-ta|가방을 비워
+لَبَس / يِلْبِس|LA-bas / YIL-bis|라바스 / 일비스|입다, 착용하다|Wear, Put on|IL-bis ti-'EEL|옷 따뜻하게 입어
+قَلَع / يِقْلَع|'A-la' / YI'-la'|알라으 / 이으라으|벗다|Take off (clothes)|I'-la' ig-ga-KIT-ta|재킷을 벗으세요
+فَتِّش / يِفَتِّش|fat-tish / yi-FAT-tish|팟티쉬 / 이팟티쉬|수색하다, 검사하다|Inspect|fat-ti-SHOO ish-SHA-nat fil-ma-TAAR|가방을 검사했어요
+جَازِف / يِجَازِف|GAA-zif / yi-GAA-zif|가지프 / 이가지프|모험하다, 감수하다|Risk|mat-ga-ZIFSH bi-flu-SAK|돈으로 모험하지 마
+نَبِّه / يِنَبِّه|nab-bih / yi-NAB-bih|납비흐 / 인납비흐|주의를 주다, 일러두다|Alert|NAB-bih 'a-LEEH YEE-gi BAD-ri|일찍 오라고 일러둬
+خَشَب|KHA-shab|카샤브|나무, 목재|Wood|ta-ra-BEE-za KHA-shab|원목 테이블
+حَدِيد|ha-DEED|하디드|철, 쇠|Iron, Metal|BAAB ha-DEED|철문, 방범문
+قُمَاش|'o-MAASH|오마쉬|천, 직물, 패브릭|Cloth, Fabric|'o-MAASH NAA-'im|부드러운 천
+جِلْد|GILD|길드|가죽, 피부|Leather, Skin|ga-KIT-ta GILD|가죽 재킷
+قُطْن|'OTN|오튼|면, 목화|Egyptian cotton|'OTN MAS-ri MEY-ya fil-MEY-ya|100% 이집트산 면
+حَرِير|ha-REER|하리르|실크, 비단|Silk|'a-MEES ha-REER|실크 셔츠
+فِضَّة|FID-da|피드다|은, 실버|Silver|KHAA-tim FID-da|은반지
+دَهَب|DA-hab|다합|금, 골드|Gold|'e-YAAR WAA-hid w-'ish-REEN|21K 순금
+إِزَاز|e-ZAAZ|이자즈|유리|Glass|koo-BAA-ya e-ZAAZ|유리컵
+بْلَاسْتِيك|blas-TEEK|블라스틱|플라스틱|Plastic|KUR-si blas-TEEK|플라스틱 의자
+عُصْفُور فِي الإِيد|'os-FOOR fil-EED|오스푸르 필이드|손 안의 참새|A bird in hand|'os-FOOR fil-EED wa-la 'A-sha-ra 'ash-SHA-ga-ra|손 안의 참새 한 마리가 나무 위 열 마리보다 낫다
+خُطْوِة عِزّ|KHOT-wit 'EZZ|코트위트 이즈|영광의 발걸음|An honorable visit|ze-YAR-tak KHOT-wit 'EZZ|당신의 방문은 우리에게 큰 영광입니다
+نُوَّارِة البِيت|naw-WAA-rit il-BEET|나우와리트 일비트|집안의 등불|Light of the house|AH-lan beek ya naw-WAA-rit il-BEET|어서 와요 우리 집안의 빛이여
+كُلّ تَأْخِيرَة فِيهَا خِيرَة|kull ta'-KHEE-ra fee-ha KHEE-ra|쿨 타키라 피하 키라|지연에도 좋은 뜻이 있다|Delay blessing|mat-za'-ALSH, kull ta'-KHEE-ra fee-ha KHEE-ra|서운해하지 마, 늦어진 데는 다 뜻이 있어
+شِدّ حِيلَك|SHADD HEE-lak|샷드 힐라크|힘내세요, 기운 차리세요|Stay strong|SHADD HEE-lak, KUL-lu ha-yi-'AD-di|기운 내, 다 지나갈 거야
+الله يِقَوِّيك|al-LAAH yi-'aw-WEEK|알라 이아우위크|힘내세요 화답|May God strengthen you|al-LAAH yi-'aw-WEEK ya GHAA-li|고마워 힘낼게
+مِنْ طَقْطَق لِسَلَامُو عَلِيكُو|min TA'-ta' li-sa-LAA-mu 'a-LEE-ku|민 타으타으 리살라무 알리쿠|처음부터 끝까지, A부터 Z까지|From start to finish|HA-ka lil-maw-DOO' KUL-lu|처음부터 끝까지 다 말해줬어요
+عِينِي فِيه|'AY-ni feeh|아이니 피|눈독 들이고 있다|Eye on it|il-'a-MEES da 'AY-ni feeh|저 셔츠 예전부터 찜해뒀어
+عَلَى قَدّ الحَال|'a-la 'add il-HAAL|알라 앗드 일할|소박하게, 형편에 맞게|Modest|'AA-yish 'a-la 'add il-HAAL|분수에 맞게 소박하게 살아요
+يَا فَتَّاح يَا عَلِيم|ya fat-TAAH ya 'a-LEEM|야 팟타흐 야 알림|상쾌한 아침 시작!|Fresh morning start|ya fat-TAAH ya 'a-LEEM, yom ga-DEED|하느님의 은혜로 시작하는 새 날!`,
+15:`
+خَلَّاط|khal-LAAT|칼라트|믹서기, 블렌더|Blender, Mixer|i'-mil il-'a-SEER fil-khal-LAAT|믹서기로 주스를 갈아 만드세요
+غَلَّايَة|ghal-LAY-ya|갈라이야|전기포트, 주전자|Electric kettle|shagh-GHAL il-ghal-LAY-ya lish-SHAAY|차 마시게 전기포트 켜 줘
+مِيكْرُووِيف|mik-ro-WEEV|미크로위브|전자레인지|Microwave|sakh-khan il-AKL fil-mik-ro-WEEV|음식을 전자레인지에 데우세요
+حَلَّة|HAL-la|할라|냄비, 솥|Pot, Cooking pot|HAL-lit ish-SHOOR-ba 'alan-NAAR|수프 냄비가 불 위에 있어요
+طَاسَة|TAA-sa|타사|프라이팬, 팬|Frying pan, Skillet|I'-li il-BEED fit-TAA-sa|프라이팬에 계란을 부치세요
+صِينِيَّة|see-NEY-ya|시니야|쟁반, 오븐 팬|Tray, Baking tray|HAAT kub-ba-YAAT ish-SHAAY 'ala see-NEY-ya|찻잔들을 쟁반에 담아 오세요
+فُرْن|FORN|포른|오븐, 화덕|Oven, Bakery kiln|hott il-fa-REE'-' fil-FORN|닭고기를 오븐에 넣으세요
+فَتَّاحَة|fat-TAA-ha|팟타하|오프너, 캔따개|Opener, Can opener|FEEN fat-TAA-hit il-e-ZAA-za?|병따개가 어디 있나요?
+لِيفَة|LEE-fa|리파|수세미, 천연 루파|Loofah, Sponge|LEE-fa li-gha-SEEL il-ma-wa-'EEN|설거지용 수세미
+سَائِل مَوَاعِين|SA-il ma-wa-'EEN|사일 마와인|주방세제, 퐁퐁|Dish soap|ish-TA-ri SA-il ma-wa-'EEN|주방세제 좀 사 오세요
+مَطَار|ma-TAAR|마타르|공항|Airport|ma-TAAR il-qa-HE-ra id-DU-li|카이로 국제공항
+طَيَّارَة|tay-YAA-ra|타이야라|비행기|Airplane, Plane|ri-KIBT it-tay-YAA-ra|비행기에 탑승했어요
+صَالَة|SAA-la|살라|대합실, 터미널 홀|Terminal lounge, Hall|SAA-lit il-wo-SOOL|입국장, 도착 대합실
+وَزْن زِيَادَة|WAZN ze-YAA-da|와즌 지야다|초과 수하물, 무게 초과|Excess baggage|'IN-dak WAZN ze-YAA-da fish-SHA-nat|가방 무게가 초과되었습니다
+رِحْلَة|REH-la|레흘라|여행, 비행편|Flight, Trip, Journey|REH-la sa-'EE-da!|즐거운 여행 되세요!
+طَيَرَان|ta-ya-RAAN|타야란|비행, 항공편, 항공사|Flight, Aviation|ha-GAZT 'ala MISR lit-ta-ya-RAAN|이집트항공으로 예약했어요
+خَتْم|KHOTM|코틈|도장, 출입국 스탬프|Stamp, Seal|KHOTM id-do-KHOOL fig-ga-WAAZ|여권에 찍힌 입국 도장
+شَحْن|SHAHN|샤흔|탁송, 짐 부치기, 충전|Baggage check-in, Cargo|sha-HANT ish-SHAN-ta il-ka-BEE-ra|큰 가방을 탁송으로 부쳤어요
+بَوَّابَة|baw-WAA-ba|바우와바|탑승구, 게이트, 대문|Gate, Boarding gate|RA-'am il-baw-WAA-ba KAAM?|탑승구 번호가 몇 번인가요?
+إِقْلَاع|e'-LA-a'|에을라아|이륙, 출발|Takeoff, Departure|mee-'AAD il-e'-LA-a' is-SAA-'a SIT-ta|이륙 예정 시간은 6시입니다
+كَنَس / يِكْنِس|KA-nas / YIK-nos|카나스 / 이크노스|쓸다, 청소기로 밀다|Sweep, Vacuum|IK-nos il-ar-DEY-ya ko-WAY-yis|바닥을 깨끗이 쓸어라
+مَسَح / يِمْسَح|MA-sah / YIM-sah|마사흐 / 임사흐|닦다, 걸레질하다, 지우다|Wipe, Mop, Erase|IM-sah it-ta-ra-BEE-za bi-MAY-ya|테이블을 물로 닦아 주세요
+كَوَى / يِكْوِي|KA-wa / YIK-wi|카와 / 이크위|다림질하다|Iron (clothes)|IK-wi li il-'a-MEES da|이 셔츠 좀 다려 주세요
+عَلَّق / يِعَلَّق|'al-la' / yi-'AL-la'|알라으 / 이알라으|걸다, 매달다, 댓글 달다|Hang, Comment|'AL-la' il-ho-DOOM fid-doo-LAAB|옷을 옷장에 걸어 두세요
+رِكِب / يِرْكَب|RA-kib / YIR-kab|라킵 / 이르캅|타다, 탑승하다|Ride, Board|har-kab MET-ro il-an-FAA'|지하철을 탈 거예요
+عَدّ / يِعِدّ|'ADD / yi-'EDD|아드 / 이엗드|세다, 계산하다|Count, Number|'EDD il-fu-LOOS 'ab-li ma TIM-shi|가기 전에 돈을 세어 보세요
+قَسِّم / يِقَسِّم|'as-sim / yi-'AS-sim|아스심 / 이아스심|나누다, 분할하다|Divide, Split|ne-'AS-sim il-he-SAAB bee-NE-na|계산서를 우리끼리 더치페이하자
+وَزَّع / يِوَزَّع|waz-za' / yi-WAZ-za'|와즈자으 / 이와즈자으|배포하다, 나눠주다|Distribute, Hand out|WAZ-za' il-WA-ra' 'alan-NAAS|사람들에게 종이를 나눠주세요
+رَجَّع / يِرَجَّع|rag-ga' / yi-RAG-ga'|라그가으 / 이라그가으|반품하다, 환불하다, 돌려주다|Return, Refund|'AA-yiz a-RAG-ga' il-be-LOO-za di|이 블라우스를 반품하고 싶어요
+رِجِع / يِرْجَع|RE-ge' / YIR-ga'|레게으 / 이르가으|돌아오다, 복귀하다|Return, Come back|har-GA' il-BEET is-SAA-'a SAB-'a|7시에 집에 돌아올게요
+دَرْس|DARS|다르스|수업, 과외, 교훈|Lesson, Class|'IN-di DARS 'A-ra-bi dil-WA'-ti|지금 아랍어 수업이 있어요
+فَصْل|FASL|파슬|교실, 학급, 계절|Classroom, Class, Season|it-tul-LAAB GUW-wa il-FASL|학생들이 교실 안에 있어요
+أُسْتَاذ|os-TAAZ|오스타즈|선생님, 교수님, 존칭|Teacher, Professor, Mr.|SHUK-ran ya os-TAAZ|선생님 감사합니다!
+طَالِب|TAA-leb|탈레브|학생, 수강생|Student, Learner|A-na TAA-leb fil-GAM-'a|저는 대학생입니다
+كَشْكُول|kash-KOOL|카쉬쿨|줄노트, 공책|Notebook, Spiral notebook|ish-ta-REET kash-KOOL ga-DEED|새 노트를 한 권 샀어요
+أَسْتِيكَة|as-TEE-ka|아스티카|지우개|Eraser, Rubber|ma-'AAK as-TEE-ka?|지우개 가지고 있나요?
+بَرَّايَة|bar-RAA-ya|바르라야|연필깎이|Pencil sharpener|bar-RAA-ya lil-'a-lam ir-ra-SAAS|연필용 연필깎이
+مَسْطَرَة|MES-ta-ra|메스타라|자, 직선자|Ruler|SAT-tar il-WA-ra-'a bil-MES-ta-ra|자로 종이에 줄을 그었어요
+مَقْلَمَة|MA'-la-ma|마을라마|필통|Pencil case|hott il-a'-LAAM fil-MA'-la-ma|펜들을 필통에 넣으세요
+شَهَادَة|sha-HAA-da|샤하다|수료증, 자격증, 증명서|Certificate, Diploma|a-KHADT sha-HAA-dit il-LO-gha|어학 수료증을 받았어요
+بِينِي وِبِينَك|bee-ni wa-bee-NAK|비니 와비나크|우리끼리 비밀인데, 솔직히 말해서|Between you and me|bee-ni wa-bee-NAK, il-mow-DOO' SA'B|우리끼리 얘긴데 그 일 좀 어려워요
+خُد رَاحْتَك|khud RAH-tak|쿠드 라흐타크|편히 하세요, 천천히 하세요|Take your time, make yourself at home|khud RAH-tak 'alal-AA-khir|끝까지 아주 편하게 계세요
+عَلَى مَهْلَك|'ala MAH-lak|알라 마흘라크|천천히 해, 서두르지 마|Slowly, at your own pace|IM-shi 'ala MAH-lak|서두르지 말고 천천히 가세요
+فِي أَقْرَب وَقْت|fee A'-rab WA'T|피 아으랍 와으트|가능한 한 빨리, 조만간|As soon as possible, soon|har-rodd 'a-LEEK fee A'-rab WA'T|가능한 빨리 답변드릴게요
+وَلَا يِهِمَّك|wa-la yi-HEM-mak|왈라 이헴마크|신경 쓰지 마세요, 전혀 괜찮아요|Don't worry, never mind|HA-sal KHEER, wa-la yi-HEM-mak|괜찮아요, 전혀 신경 쓰지 마세요
+حَقَّك عَلَيَّا|HA'-'ak 'a-LAY-ya|하아크 알라이야|제 잘못입니다, 미안해요|My apology, you're totally right|HA'-'ak 'a-LAY-ya, A-na it-akh-KHART|제가 늦었습니다, 죄송해요
+يِتْعِمِد عَلِيه|yi'-ta-MED 'a-LEEH|이으타메드 알리|믿을 만한 사람이다, 든든하다|Reliable, dependable|RAA-gel yi'-ta-MED 'a-LEEH|믿고 일을 맡길 수 있는 사람
+كِلْمِة شَرَف|ki-LE-mit SHA-raf|킬레밋 샤라프|명예를 건 약속, 맹세|Word of honor, Promise|DI ki-LE-mit SHA-raf MIN-ni|이건 제 명예를 건 약속입니다
+كِفَايَة|ke-FAY-ya|케파이야|충분해요, 그만해도 돼요|Enough, That's sufficient|KI-da ke-FAY-ya 'A-wi|이 정도면 아주 충분합니다
+عَلَى خِير|'ala KHEER|알라 키르|무사히, 좋은 일로, 평안히|In good health, smoothly|nit-'AA-bel BUK-ra 'ala KHEER|내일 무사히 좋은 일로 만나요`,
+16:`
+جِنِينَة|ge-NEE-na|게니나|정원, 뜰, 공원|Garden, Yard|ig-ge-NEE-na mal-YAA-na WARD|정원에 꽃이 가득해요
+بَلْكُونَة|bal-KO-na|발코나|베란다, 발코니|Balcony|ISH-rab 'AH-wa fil-bal-KO-na|베란다에서 커피 한잔 마셔요
+شَجَرَة|SHA-ga-ra|샤가라|나무, 수목|Tree|SHA-ga-rit MAN-ga ka-BEE-ra|큰 망고나무
+زَرْع|ZAR'|자르으|식물, 화초, 농작물|Plants, Crops|IS-'i iz-ZAR' kull YOM|매일 화초에 물을 주세요
+قَصْرِيَّة|as-REY-ya|아스리야|화분, 분|Flowerpot, Planter|hott in-na-BAAT fee as-REY-ya|식물을 화분에 심으세요
+وَرْدَة|WAR-da|와르다|장미꽃, 꽃 한 송이|Rose, Flower|WAR-da HAM-ra ga-MEE-la|아름다운 붉은 장미
+نَعْنَاع|na'-NAA'|나으나아|민트, 박하|Mint|SHAAY bin-na'-NAA' low sa-MAHT|민트 티 한잔 부탁해요
+رِيحَان|ree-HAAN|리한|바질, 허브|Basil, Sweet basil|REE-hit ir-ree-HAAN HIL-wa 'A-wi|바질 향이 참 향긋해요
+خَرْطُوم|khor-TOOM|코르툼|호스, 물호스|Hose, Water hose|khor-TOOM MAY-ya lil-ge-NEE-na|정원용 물호스
+طِين|TEEN|틴|흙, 진흙, 토양|Soil, Mud, Clay|TEEN kha-SEEB liz-ze-RAA-'a|원예용 비옥한 흙
+حَرّ|HARR|하르|더위, 더운|Heat, Hot|ig-GAWW HARR in-na-HAR-da|오늘 날씨가 더워요
+بَرْد|BARD|바르드|추위, 쌀쌀한|Cold, Chill|id-DEN-ya BARD bil-LEEL|밤에는 날씨가 쌀쌀해요
+شَمْس|SHAMS|샴스|태양, 햇볕|Sun, Sunshine|ish-SHAMS 'a-WEY-ya dil-WA'-ti|지금 햇볕이 무척 강해요
+ضِلّ|DILL|딜|그늘, 그림자|Shade, Shadow|ta-'AA-la ne'-'od fid-DILL|그늘에 와서 앉아요
+هَوَا|HA-wa|하와|바람, 공기, 산들바람|Wind, Air, Breeze|FEEH HA-wa BAH-ri ga-MEEL|시원한 북풍 바람이 불어요
+مَطَر|MA-tar|마타르|비|Rain|id-DEN-ya bat-MAT-tar fis-kan-da-REY-ya|알렉산드리아에 비가 와요
+سَحَاب|sa-HAAB|사하브|구름|Clouds|is-SA-ma fee-ha sa-HAAB|하늘에 구름이 끼어 있어요
+رُطُوبَة|ro-TOO-ba|로투바|습도, 습기|Humidity, Moisture|ir-ro-TOO-ba 'AL-ya fis-SEE-f|여름에는 습도가 높아요
+خَمَاسِين|kha-ma-SEEN|카마신|봄철 모래폭풍, 캄신|Khamsin, Sandstorm|re-YAAH il-kha-ma-SEEN fir-ra-BEE'|봄철에 부는 캄신 모래바람
+شِتَا|SHE-ta|셰타|겨울, 비 오는 계절|Winter, Rainy season|ish-SHE-ta fee MISR DAA-fi|이집트의 겨울은 온화해요
+شَمّ / يِشِمّ|SHAMM / yi-SHEMM|샴 / 이솀|냄새 맡다|Smell, Sniff|SHEMM ir-REE-ha il-HIL-wa di|이 좋은 향기 좀 맡아 봐
+دَاق / يِدُوق|DAA' / yi-DOO'|다으 / 이두으|맛보다, 시식하다|Taste|DOO' il-AKL da KI-da|이 음식 맛 좀 보세요
+لَمَس / يِلْمِس|LA-mas / YIL-mis|라마스 / 일미스|만지다, 접촉하다|Touch|mat-lim-SISH il-e-ZAAZ il-mak-SOOR|깨진 유리를 만지지 마세요
+طَلَب / يِطْلُب|TA-lab / YIT-lob|탈라브 / 이틀로브|주문하다, 요청하다|Order, Request|ta-LABT OR-der de-li-ve-ri|배달 주문을 시켰어요
+وَصَف / يُوصِف|WA-saf / YOO-sef|와사프 / 유세프|설명하다, 묘사하다, 길을 가르쳐주다|Describe, Direct|OW-sef lit-ta-REE' low sa-MAHT|길 좀 설명해 주세요
+سَاعِد / يِسَاعِد|SAA-'id / yi-SAA-'id|사이이드 / 이사이이드|돕다, 도와주다|Help, Assist|MUM-kin ti-sa-'ED-ni fee di?|이것 좀 도와줄 수 있나요?
+حَضَن / يِحْضُن|HA-dan / YIH-don|하다안 / 이흐돈|안다, 포옹하다|Hug, Embrace|HA-dan IB-noh is-su-GHAY-yar|어린 아들을 꼭 안았어요
+سَلِّم / يِسَلِّم|sal-lim / yi-SAL-lim|살림 / 이살림|인사하다, 악수하다, 인도하다|Greet, Shake hands, Hand over|SAL-lim 'ala kull il-'EEL-la|온 가족에게 안부 전해줘
+بَاس / يِبُوس|BAAS / yi-BOOS|바스 / 이부스|입 맞추다, 볼 뽀뽀하다|Kiss|BAAS EED OM-moh|어머니의 손에 공경의 입을 맞췄어요
+عَزَم / يِعْزِم|'A-zam / YI'-zem|아잠 / 이으젬|초대하다, 한턱내다|Invite, Treat|A-na 'AZ-mak 'alal-gha-DA|제가 점심 대접할게요
+سِينِمَا|SE-ne-ma|세네마|영화관, 영화|Cinema, Movies|ta-'AA-la ne-ROOH is-SE-ne-ma|영화관에 같이 가자
+فِيلْم|FEELM|필름|영화, 필름|Movie, Film|FEELM ko-MEE-di MAS-ri|이집트 코미디 영화
+مَسْرَح|MAS-rah|마스라흐|극장, 연극 무대|Theater, Stage|ta-ZAA-ker il-MAS-rah il-HORR|소극장 연극 티켓
+تِيَاتْرُو|ti-YAT-ro|티야트로|연극, 극장(친근한 구어)|Theater play|dakh-LEEN it-ti-YAT-ro in-na-HAR-da|오늘 연극 보러 들어가요
+مُوسِيقَى|moo-SEE-'a|무시으아|음악|Music|moo-SEE-'a shar-'EY-ya HAD-ya|잔잔한 오리엔탈 음악
+أُغْنِيَّة|ogh-NEY-ya|오그니야|노래, 가요|Song|ogh-NEY-ya li-omm kal-SOOM|움 쿨숨의 노래
+طَاوْلَة|TAW-la|타울라|백개먼 주사위 게임, 타울라|Backgammon, Tavla|TIL-'ab DOWR TAW-la 'alal-'AH-wa?|카페에서 타울라 한판 할래?
+دُومِينُو|DO-mi-no|도미노|도미노 게임|Dominoes|LE'-bit id-DO-mi-no il-mash-HOO-ra|이집트에서 유명한 도미노 게임
+مَاتْش|MAATSH|마트쉬|경기, 시합, 축구 매치|Match, Game|MAATSH il-AH-li wiz-za-MAA-lik|알 아흘리와 자말렉의 라이벌 경기
+نَادِي|NAA-di|나디|스포츠 클럽, 모임|Sporting club, Club|RAA-yih in-NAA-di at-DAR-rab|운동하러 스포츠 클럽에 가요
+عِنْدَك حَقّ|'IN-dak HA''|인다크 하아|네 말이 맞아, 전적으로 동의해|You are right|'IN-dak HA'' fee kull ki-LE-ma|네 말 한마디 한마디가 다 맞아
+أُمَّال إِيه|om-MAAL EH|옴말 에|그럼 당연하지!, 두말하면 잔소리지|Of course!, Obviously!|'AG-bak il-AKL? — om-MAAL EH!|음식 마음에 들어? — 당연하지!
+حَرَام عَلِيك|ha-RAAM 'a-LEEK|하람 알리크|너무하네, 그러면 안 되지 (원망·안타까움)|That's too bad, have pity|ha-RAAM 'a-LEEK, ta-'ABT NAF-sak|무리하지 마요, 너무 애쓰셨어요
+رَبِّنَا يِسْتُر|rab-be-NA YIS-tor|랍베나 이스토르|부디 무탈하기를, 신께서 보살피시길|May God protect us|id-DEN-ya ZAH-ma, rab-be-NA YIS-tor|길이 막히는데 무사하길 바라요
+عُيُونَك الحِلْوَة|'o-YOO-nak il-HIL-wa|오유나크 일힐와|칭찬에 대한 화답 (당신 눈이 고와서 그래요)|Your sweet eyes (compliment response)|LIB-sak ga-MEEL! — DI 'o-YOO-nak il-HIL-wa|옷이 참 예뻐요! — 좋게 봐주셔서 그래요
+مَا يِغْلَاش عَلِيك|ma yigh-LAASH 'a-LEEK|마 이글라쉬 알리크|당신에겐 아까울 게 없어요 (칭찬 물건 주려 할 때)|Nothing is too precious for you|'AG-bi-nil-'a-LAM da — ma yigh-LAASH 'a-LEEK|펜 멋지네요 — 당신께 선물로 드릴게요
+زَيّ الفُلّ|ZAYY il-FOLL|자이 일풀|최고예요, 아주 완벽해요|Perfect, Great like jasmine|kull HAA-ga MASH-ya ZAYY il-FOLL|모든 일이 아주 순조롭게 잘 풀려요
+مِنْ عِينَيَّا|min 'ee-NAY-ya|민 이나이야|기꺼이 해드리지요, 제 눈을 걸고서라도|With pleasure, gladly|MUM-kin kub-BAY-it MAY-ya? — min 'ee-NAY-ya lit-NEEN|물 한잔 부탁해요 — 두말없이 얼른 갖다 드릴게요
+يَا سَلَام|ya sa-LAAM|야 살람|와 대단하다!, 어머나!, 저런!|Wow!, Oh my!, Goodness!|ya sa-LAAM 'alal-ga-MAAL da!|와, 정말 이렇게 아름다울 수가!
+تِسْلَم دِمَاغَك|TIS-lam de-MAA-ghak|티슬람 데마가크|아이디어 참 기발하네!, 머리 좋다!|Brilliant idea!, Bless your brain|FIK-ra mom-TAA-za, TIS-lam de-MAA-ghak|기막힌 생각이야, 머리 진짜 좋다!`,
+17:`
+مَحَطَّة|ma-HAT-ta|마핫타|정류장, 역|Station, Stop|ma-HAT-tit MISR lil-'e-ta-RAAT|카이로 중앙 기차역
+مِتْرُو|MET-ro|메트로|지하철|Metro, Subway|A'-rab ma-HAT-tit MET-ro FEEN?|가장 가까운 지하철역이 어디인가요?
+قَطْر|'ATR|아트르|기차, 열차|Train|'ATR is-kan-da-REY-ya ha-yi-'OOM dil-WA'-ti|알렉산드리아행 기차가 곧 출발해요
+شِبَّاك تَذَاكِر|sheb-BAAK ta-ZAA-ker|셰박 타자케르|매표소, 티켓 창구|Ticket counter, Ticket window|ish-TA-ri it-taz-KA-ra min ish-sheb-BAAK|매표 창구에서 표를 사세요
+رَصِيف|ra-SEEF|라시프|승강장, 플랫폼, 보도|Platform, Pavement|il-'ATR 'ala ra-SEEF NEM-rit ta-LAA-ta|열차가 3번 플랫폼에 있습니다
+كَارْت مِتْرُو|KART MET-ro|카르트 메트로|지하철 충전 카드|Metro pass, Smart card|'AA-yiz ASH-han KART il-MET-ro|지하철 카드를 충전하고 싶어요
+تَاكْسِي عَدَّاد|TAK-si 'ad-DAAD|탁시 앗다드|미터기 택시 (화이트택시)|Metered taxi (White taxi)|shagh-GHAL il-'ad-DAAD low sa-MAHT|미터기 켜고 가 주세요
+أُوبَر|OO-ber|우베르|우버, 차량 호출 서비스|Uber, Ride-hailing|OT-lob OO-ber li-HADD he-NA|여기까지 우버를 불러 줘
+زَحْمِة طَرِيق|ZAH-mit ta-REE'|자흐밋 타리으|교통 체증, 차 막힘|Traffic jam|it-ta-REE' ZAH-ma GID-dan 'alad-da-'E-ri|링로드 순환도로가 꽉 막혔어요
+كُوبْرِي|KOB-ri|코브리|다리, 교량|Bridge, Overpass|'AD-di KOB-ri 'asr in-NEEL|카스르 엘 닐 다리를 건너세요
+مَخَدَّة|ma-KHAD-da|마카드다|베개, 쿠션|Pillow, Cushion|'AA-yiz ma-KHAD-da ma-REE-ha|편안한 베개가 필요해요
+بَطَّانِيَّة|bat-ta-NEY-ya|밧타니야|담요, 모포|Blanket|ghat-TEE-ni bil-bat-ta-NEY-ya|담요를 덮어 주세요
+مِلَايَة|me-LAY-ya|멜라이야|침대 시트, 홑이불|Bed sheet|ghay-YAR me-LAY-it is-se-REER|침대 시트를 갈아 주세요
+لِحَاف|le-HAAF|레하프|이불, 솜이불|Quilt, Duvet|le-HAAF FAY-ber DAA-fi|따뜻한 극세사 솜이불
+مَرْتَبَة|mar-TA-ba|마르타바|매트리스, 요|Mattress|mar-TA-ba SOOS-ta ko-WAY-yis-a|스프링이 좋은 매트리스
+كُومُودِينُو|ko-mo-DEE-no|코모디노|침대 협탁|Nightstand, Bedside table|hott in-nad-DAA-ra 'alal-ko-mo-DEE-no|안경을 침대 협탁 위에 두세요
+أَبَاجُورَة|a-ba-ZHOO-ra|아바주라|탁상 스탠드, 침실 조명|Lampshade, Table lamp|taf-fi il-a-ba-ZHOO-ra 'ab-li ma ta-NAAM|자기 전에 스탠드를 끄세요
+شَمَّاعَة|sham-MAA-'a|샴마아|옷걸이, 모자걸이|Clothes hanger, Coat rack|'AL-la' il-BAD-la 'alash-sham-MAA-'a|양복을 옷걸이에 거세요
+دُرْج|DORG|도르그|서랍|Drawer|fa-TAHT DORG il-MAK-tab|책상 서랍을 열었어요
+سُوسْتَة|SOOS-ta|수스타|지퍼, 용수철|Zipper, Spring|'af-fil SOOS-tit ig-ga-KIT-ta|재킷 지퍼를 채우세요
+ضِحِك / يِضْحَك|DE-hek / YID-hak|데헥 / 이드학|웃다|Laugh, Smile|de-HEK-na min 'al-BE-na|우리는 마음껏 웃었어요
+عَيَّط / يِعَيَّط|'ay-yat / yi-'AY-yat|아이야트 / 이아이야트|울다, 눈물 흘리다|Cry, Weep|mat-'ay-YATSH, KUL-lu ha-YIB-'a ta-MAAM|울지 마, 다 잘 될 거야
+اِشْتَاق / يِشْتَاق|ish-TAA' / yish-TAA'|이쉬타으 / 이쉬타으|그리워하다, 보고 싶다|Miss, Long for|ish-TA'-ti-lak 'A-wi|당신이 너무 보고 싶었어요
+تِعِب / يِتْعَب|TE-'eb / YIT-'ab|테압 / 이트압|지치다, 피곤해지다, 아프다|Get tired, Exhausted|A-na TE-'ebt min il-MASH-y|걷느라 너무 지쳤어요
+خَفّ / يِخِفّ|KHAFF / yi-KHEFF|카프 / 이케프|낫다, 완쾌되다, 가벼워지다|Recover, Lighten|ALF sa-LAA-ma, in sha ALLAH ti-KHEFF bi-SOR-'a|쾌유를 빕니다, 얼른 나으세요
+سَكَت / يِسْكُت|SA-kat / YIS-kot|사카트 / 이스코트|조용히 하다, 말을 멈추다|Be quiet, Stop talking|IS-kot KHA-lis dil-WA'-ti|지금은 가만히 조용히 있어
+صَبَر / يِصْبُر|SA-bar / YIS-bor|사바르 / 이스보르|참다, 인내하다|Be patient, Endure|IS-bor 'a-LAY-ya da-'EE-'a|1분만 참고 기다려 줘
+قِلِق / يِقْلَق|'E-le' / YI'-la'|엘레으 / 이으라으|걱정하다, 불안해하다|Worry, Be anxious|mat-I'-LA'-sh 'a-LAY-ya|내 걱정은 전혀 하지 마세요
+رَيَّح / يِرَيَّح|ray-yah / yi-RAY-yah|라야흐 / 이라야흐|편안하게 쉬다, 안심시키다|Rest, Relax|A-na 'AA-yiz a-RAY-yah she-WAY-ya|조금 쉬고 싶어요
+نِدِم / يِنْدَم|NE-dem / YIN-dam|네뎀 / 인담|후회하다|Regret|MISH ha-TIN-dam A-ba-dan|절대 후회하지 않을 거예요
+بْلَاسْتَر|be-LAS-tar|벨라스타르|반창고, 대일밴드|Band-aid, Plaster|'IN-dak be-LAS-tar go-ROOH?|상처용 반창고 있나요?
+شَاش|SHAASH|샤쉬|거즈, 붕대용 천|Gauze, Muslin|OR-bot ig-GORH bi-SHAASH|상처를 거즈로 감싸세요
+قُطْن|'OTN|오튼|탈지면, 의료용 솜|Medical cotton|'OTN TIB-bi lit-tat-HEER|소독용 의료용 솜
+كُحُول|ko-HOOL|코홀|소독용 알코올|Rubbing alcohol|tah-har ig-GORH bi-ko-HOOL|상처를 알코올로 소독하세요
+مُطَهِّر|mo-TAH-her|모타하르|소독약, 살균제|Antiseptic, Sanitizer|mo-TAH-her lil-ee-DEEN|손 소독제
+كَمَّامَة|kam-MAA-ma|캄마마|마스크, 방역마스크|Face mask|IL-bis kam-MAA-ma fiz-ZAH-ma|사람 많은 곳에선 마스크를 쓰세요
+جْوَانْتِي|gwan-ti|관티|위생장갑, 고무장갑|Gloves|gwan-ti TIB-bi lil-is-te'-MAAL|의료용 일회용 장갑
+مُسَكِّن|mo-SAK-kin|모사킨|진통제|Painkiller|'AA-yiz mo-SAK-kin lis-so-DAA'|두통 진통제 좀 주세요
+مُضَادّ حَيَوِي|mo-DAAD ha-ya-wi|모다드 하야위|항생제|Antibiotic|il-mo-DAAD il-ha-ya-wi LAA-zim ro-SHET-ta|항생제는 처방전이 필요해요
+مَرْهَم حُرُوق|MAR-ham ho-ROO'|마르함 호루으|화상 연고|Burn ointment|hott MAR-ham ho-ROO' bi-SOR-'a|얼른 화상 연고를 바르세요
+بِالهَنَا وِالشِّفَا|bil-HA-na wish-SHE-fa|빌하나 위쉬셰파|맛있게 드세요, 건강하세요 (식사 덕담)|Bon appétit, with health|bil-HA-na wish-SHE-fa 'ala 'AL-bak|맛있게 드시고 건강하세요
+الله يِهَنِّيك|al-LAAH yi-han-NEEK|알라 이한니크|식사 덕담에 대한 화답|May God bring you joy (response to bon appétit)|al-LAAH yi-han-NEEK ya ha-BEE-bi|덕담 감사합니다, 복 받으세요
+تِسْلَم إِيدَك|TIS-lam EE-dak|티슬람 이다크|음식이나 수고에 대한 감사 (손길에 축복을)|Bless your hands (thank you for cooking)|il-AKL TOH-fa, TIS-lam EE-dak|음식이 예술이에요, 정말 잘 먹었습니다
+تِسْلَم|TIS-lam|티슬람|고마워요, 신께서 지켜주시길 (남성에게)|Thank you, May you be safe|TIS-lam ya GHAA-li 'alaz-ze-YAA-ra|귀한 걸음 해줘서 고마워요
+تِسْلَمِي|TIS-la-mi|티슬라미|고마워요 (여성에게)|Thank you (to a female)|TIS-la-mi ya OM-mi|어머니 감사해요
+عَامْرَة دَايْمًا|'AAM-ra DAY-man|암라 다이만|언제나 집안에 온기와 복이 가득하길 (식사 후 덕담)|May your home always be prosperous|SOF-ra 'AAM-ra DAY-man bi-AH-la-ha|언제나 복이 넘치는 집안이 되길 바랍니다
+كَرَم حَاتِمِي|KA-ram HA-te-mi|카람 하테미|더없이 융숭한 대접, 극진한 환대|Extreme Arab generosity|ak-ram-TOO-na KA-ram HA-te-mi|너무나 극진한 대접을 받았습니다
+بِيت كَرِيم|BEET ka-REEM|비트 카림|넉넉하고 따뜻한 집안|A generous hospitable home|DAY-man BEET ka-REEM wa-maf-TOOH|언제나 따뜻하게 열려 있는 넉넉한 집
+صِحَّة وِعَافْيَة|SAH-ha wa-'AF-ya|사흐하 와아프야|건강과 활력을 빕니다|Health and wellness|ALF SAH-ha wa-'AF-ya|항상 건강하시길 진심으로 빕니다
+يِجْعَلُه عَامِر|yig-'A-loh 'AA-mer|이그알루흐 아메르|집안이 늘 번창하기를 축원합니다|May your home always prosper|mab-ROOK il-BEET ig-ga-DEED, yig-'A-loh 'AA-mer|새 집 축하해요, 늘 번창하고 행복하세요`,
+18:`
+مِسْمَار|mes-MAAR|메스마르|못, 나사못|Nail, Screw|DO'' il-mes-MAAR fil-HEE-ta|벽에 못을 박으세요
+شَاكُوش|sha-KOOSH|샤쿠쉬|망치, 해머|Hammer|HAAT ish-sha-KOOSH a-DO'' mes-MAAR|못 박게 망치 좀 가져와
+مَفَكّ|ma-FAKK|마팍|드라이버|Screwdriver|ma-FAKK sa-LEE-ba|십자 드라이버
+بَنَسَة|BA-na-sa|바나사|펜치, 플라이어|Pliers, Pincers|EM-sek is-SELK bil-BA-na-sa|전선을 펜치로 잡으세요
+مُفْتَاح فِرَنْسَاوِي|mef-TAAH fe-ran-SA-wi|메프타흐 페란사위|몽키스패너, 조절식 렌치|Adjustable wrench|OR-bot is-sa-MOO-la bi-mef-TAAH|너트를 렌치로 조이세요
+شِكَرْتُون|she-kar-TOON|셰카르툰|절연 테이프, 전기 테이프|Electrical tape|LIFF is-SELK bi-she-kar-TOON|전선을 절연 테이프로 감으세요
+صَامُولَة|sa-MOO-la|사물라|너트, 암나사|Nut (hardware)|sa-MOO-lit il-ha-na-FEY-ya SAY-ba|수도꼭지 너트가 헐거워요
+حَبْل|HABL|하블|밧줄, 끈, 줄|Rope, Cord|OR-bot il-kar-TOON-a bi-HABL|박스를 끈으로 단단히 묶어
+غِرَا|GHE-ra|게라|목공용 풀, 접착제|Glue, Wood adhesive|GHE-ra KHA-shab 'A-wi|강력한 목공용 접착제
+سِلْك|SELK|셀크|전선, 철사|Wire, Cable|SELK il-kah-ra-BA ma'-TOO'|전기선이 끊어졌어요
+سُخُونِيَّة|so-khoo-NEY-ya|소쿠니야|열, 발열, 고열|Fever, High temperature|'IN-di so-khoo-NEY-ya min im-BAA-reh|어제부터 열이 나요
+صُدَاع|so-DAA'|소다으|두통|Headache|HAAS-ses bi-so-DAA' sha-DEED|두통이 심하게 느껴져요
+دَوْخَة|DOW-kha|다우카|어지러움, 현기증|Dizziness|'IN-di DOW-kha MISH 'AA-der A-'ef|어지러워서 서 있지를 못하겠어요
+مَغَص|MA-ghas|마가스|복통, 배탈|Stomach ache, Cramps|MA-ghas fee BAT-ni GAA-med|배가 쥐어짜듯 심하게 아파요
+إِسْهَال|es-HAAL|에스할|설사|Diarrhea|DA-wa lil-es-HAAL low sa-MAHT|설사약 좀 주세요
+إِمْسَاك|em-SAAK|엠사크|변비|Constipation|ba-'AA-ni min em-SAAK|변비 때문에 고생하고 있어요
+تَرْجِيع|tar-GEE'|타르기으|구토, 게우기|Vomiting, Nausea|'EN-doh tar-GEE' wa-gha-tha-YAAN|구토와 메스꺼움 증상이 있어요
+اِلْتِهَاب|el-te-HAAB|엘테하브|염증|Inflammation, Infection|el-te-HAAB fiz-ZOOR|목감기, 인후염
+كَسْر|KASR|카스르|골절, 부러짐|Fracture, Broken bone|FEEH KASR fir-REGL|다리에 골절이 있습니다
+نَزِيف|na-ZEEF|나지프|출혈, 피 흘림|Bleeding, Hemorrhage|wa'-'af in-na-ZEEF bi-SHAASH ni-DEEF|깨끗한 거즈로 출혈을 멈추세요
+قَرَّر / يِقَرَّر|'ar-rar / yi-'AR-rar|아르라르 / 이아르라르|결정하다, 결심하다|Decide|'ar-RART a-SAA-fer il-o'-SOR|룩소르로 여행 가기로 결정했어요
+وَافِق / يِوَافِق|WAA-fe' / yi-WAA-fe'|와페으 / 이와페으|동의하다, 승낙하다|Agree, Approve|A-na mo-WAA-fe' 'alal-FIK-ra|그 생각에 전적으로 동의합니다
+رَفَض / يِرْفُض|RA-fad / YIR-fod|라파드 / 이르포드|거절하다, 거부하다|Refuse, Reject|RA-fad il-'ARD da|그 제안을 거절했어요
+حَاسِب / يِحَاسِب|HAA-seb / yi-HAA-seb|하세브 / 이하세브|조심하다, 주의하다, 계산하다|Watch out, Pay bill|HAA-seb min il-'a-ra-BEY-ya!|차 조심해!
+سَامِح / يِسَامِح|SAA-meh / yi-SAA-meh|사메흐 / 이사메흐|용서하다|Forgive, Pardon|SAA-meh-ni, ma-kon-TISH A'-sod|용서해 주세요, 고의가 아니었어요
+عَنِّد / يِعَنِّد|'an-nid / yi-'AN-nid|안니드 / 이안니드|고집부리다, 버티다|Be stubborn|mat-'an-NIDSH ma-'AAH|그 사람과 공연히 고집부리지 마
+غَيَّر / يِغَيَّر|ghay-yar / yi-GHAY-yar|가이야르 / 이가이야르|바꾸다, 환전하다|Change, Exchange|'AA-yiz a-GHAY-yar do-LAAR bi-MAS-ri|달러를 이집트 파운드로 바꾸고 싶어요
+ثَبِّت / يِثَبِّت|sab-bit / yi-SAB-bit|삽비트 / 이삽비트|고정하다, 단단히 붙이다|Fix, Fasten, Secure|SAB-bit ir-RAFF fil-HEE-ta|선반을 벽에 단단히 고정해
+فَرَّج / يِفَرَّج|far-rag / yi-FAR-rag|파르라그 / 이파르라그|구경시켜주다, 보여주다|Show around|ha-far-RA-gak 'alal-ma-DEE-na|내가 도시 구경시켜 줄게
+خَبَّط / يِخَبَّط|khab-bat / yi-KHAB-bat|캅바트 / 이캅바트|노크하다, 두드리다|Knock, Bang|KHAB-bat 'alal-BAAB 'ab-li ma TID-khol|들어가기 전에 문을 두드리세요
+بُوسْطَة|BOS-ta|보스타|우체국, 우편|Post office, Mail|MAK-tab il-BOS-ta FEEN?|우체국이 어디에 있나요?
+طَرْد|TARD|타르드|소포, 택배 박스|Parcel, Package|'IN-di TARD 'AA-yiz ab-'A-toh|보내고 싶은 소포가 하나 있어요
+جَوَاب|ga-WAAB|가와브|편지, 서한|Letter, Mail|GAA-li ga-WAAB fil-BOS-ta|우편으로 편지 한 통이 왔어요
+ظَرْف|ZARF|자르프|봉투, 편지봉투|Envelope|hott il-WA-ra' GUW-waz-ZARF|서류를 봉투 안에 넣으세요
+طَابَع|TAA-be'|타베으|우표, 인지|Postage stamp|TAA-be' BOS-ta li-KOR-ya|한국행 우편 우표
+مُسَجَّل|mo-SAG-gal|모삭갈|등기 우편, 등록된|Registered mail|ga-WAAB mo-SAG-gal bi-'EL-mil-wo-SOOL|배달 증명 등기 편지
+إِيصَال|ee-SAAL|이사알|접수증, 수령증, 영수증|Receipt, Voucher|khud ee-SAAL it-TARD|소포 접수증을 받으세요
+شِرْكِة شَحْن|SHER-kit SHAHN|셰르킷 샤흔|택배 회사, 운송사|Courier company, Shipping agency|ba-'a-TOOH 'ala SHER-kit SHAHN|택배 회사를 통해 발송했어요
+طَيَّار|tay-YAAR|타이야르|오토바이 배달원, 퀵기사|Delivery courier|it-tay-YAAR TAH-til-'e-MAA-ra|배달 기사님이 건물 밑에 와 있어요
+تَوْقِيع|taw-'EE'|타우이으|서명, 사인|Signature|mat-LOOB taw-'EE-'ak he-NA|여기에 서명해 주셔야 합니다
+كُلُّه هَيْعَدِّي|KUL-lu ha-yi-'AD-di|쿨루 하이앗디|다 지나갈 거예요, 다 잘 풀릴 겁니다|Everything will pass, it will all work out|mat-I'-LA'-sh ya SAH-bi, KUL-lu ha-yi-'AD-di|걱정 마 친구야, 다 지나갈 거야
+حَبَّة حَبَّة|HAB-ba HAB-ba|합바 합바|차근차근, 조금씩 천천히|Step by step, bit by bit|ha-tit-'AL-lim 'A-ra-bi HAB-ba HAB-ba|아랍어도 차근차근 조금씩 늘 거예요
+وَاحْدَة وَاحْدَة|WAH-da WAH-da|와흐다 와흐다|하나하나씩, 천천히|One by one, slowly|fah-HEM-ni il-mow-DOO' WAH-da WAH-da|그 일 하나하나 차근차근 설명해 줘
+الدِّنْيَا لِسَّه بِخِير|id-DEN-ya LIS-sa bi-KHEER|이드덴야 리스사 비키르|세상은 아직 살 만해요, 아직 따뜻해요|The world is still good|in-NAAS it-tay-YE-ba di ti-'ar-ra-FAK in-nid-DEN-ya LIS-sa bi-KHEER|저런 착한 분들을 보면 세상은 아직 살 만하다는 걸 느껴요
+فِي التَّأَنِّي السَّلَامَة|fit-ta-AN-ni is-sa-LAA-ma|핏타안니 이스살라마|서두르지 않아야 안전하다 (속담)|Slowness brings safety, haste makes waste|SOO' 'ala MAH-lak, fit-ta-AN-ni is-sa-LAA-ma|천천히 운전해, 서두르지 않아야 안전한 법이야
+خَلِّيهَا عَلَى الله|khal-LEE-ha 'alal-LAAH|칼리하 알랄라|하느님께 맡겨요, 순리대로 두세요|Leave it to God, trust in God|I'-mil il-li 'a-LEEK wa-khal-LEE-ha 'alal-LAAH|할 수 있는 최선을 다하고 나머진 하늘에 맡겨
+الله كَرِيم|al-LAAH ka-REEM|알라 카림|하느님은 자비로우시다|God is generous (comfort in hardship)|il-ma-sa-REEF ka-TEE-ra — mat-I'-LA'-sh, al-LAAH ka-REEM|돈 들어갈 데가 많아 — 걱정 마, 하늘이 도와주실 거야
+رَبِّنَا مَوْجُود|rab-be-NA mow-GOOD|랍베나 마우구드|신께서 언제나 함께 계십니다 (낙심할 때)|God is present, you're not alone|HAT-ta low la-WAH-dak, rab-be-NA mow-GOOD|비록 혼자라도 신께서 함께 계셔
+يُوم لِيك وِيُوم عَلِيك|YOM LEEK wa-YOM 'a-LEEK|욤 리크 와욤 알리크|좋은 날도 있고 힘든 날도 있는 법 (인생사 새옹지마)|One day for you, one against you|id-DEN-ya YOM LEEK wa-YOM 'a-LEEK, IS-bor|인생은 오르막도 내리막도 있으니 조금만 참아
+صَبَاح الفُلّ وِالْيَاسْمِين|sa-BAH il-FOLL wal-yas-MEEN|사바흐 일풀 왈야스민|자스민 꽃처럼 향기로운 아침! (우아한 아침 인사)|Morning of jasmine and flowers!|sa-BAH il-FOLL wal-yas-MEEN 'a-LEE-ku|여러분 모두 향기롭고 좋은 아침 맞으세요!`,
+19:`
+بِطَاقَة|be-TAA-'a|베타아|신분증, 카드, 주민등록증|ID card, Card|'AA-yiz SOO-rit il-be-TAA-'a|신분증 복사본이 필요합니다
+رَقَم قَوْمِي|RA-'am 'OW-mi|라암 아우미|주민등록번호, 국가식별번호|National ID number|OK-tob ir-RA-'am il-'OW-mi he-NA|여기에 주민번호를 적으세요
+شَهَادِة مِيلَاد|sha-HAA-dit mee-LAAD|샤하딧 밀라드|출생증명서|Birth certificate|sha-HAA-dit mee-LAAD kom-BYOO-ter|전산 발급 출생증명서
+اِسْتِمَارَة|es-te-MAA-ra|에스테마라|신청서, 양식, 서식|Application form|EM-la il-es-te-MAA-ra di low sa-MAHT|이 신청서를 작성해 주세요
+إِمْضَا|EM-da|엠다|서명, 사인|Signature|EM-dit SAH-bit-TA-lab|신청인의 서명
+تَوْثِيق|taw-THEE'|타우시으|공증, 인증|Notarization, Attestation|taw-THEE' ish-sha-HAA-da min il-kha-re-GEY-ya|외교부 서류 공증
+تَوْكِيل|taw-KEEL|타우킬|위임장, 대리권|Power of attorney|'a-MALT taw-KEEL lil-mo-HA-mi|변호사에게 위임장을 써주었어요
+سِجِلّ تِجَارِي|se-GEL-li te-GAA-ri|세겔리 테가리|사업자등록증, 상업등기|Commercial registry|se-GEL-li te-GAA-ri wa-be-TAA-'a da-ree-BEY-ya|사업자등록증과 납세자카드
+دَمْغَة|DAM-gha|담가|정부 수입인지, 인지대|Revenue stamp, Duty fee|ish-TA-ri TAA-be' DAM-gha bi-'A-sha-ra ge-NEE|10파운드짜리 수입인지를 사 오세요
+مُوَظَّف|mo-WAZ-zaf|모와즈자프|공무원, 직원, 창구 담당자|Employee, Officer, Clerk|il-mo-WAZ-zaf SHA-rah li il-eg-ra-'AAT|담당 직원이 절차를 설명해 주었어요
+مَعْلَقَة|MA'-la-'a|마을라아|숟가락|Spoon|MA'-la-'a su-GHAY-ya-ra lis-SOK-kar|설탕용 작은 티스푼
+شُوكَة|SHOW-ka|샤우카|포크, 가시|Fork|HAAT SHOW-ka wa-sek-KEE-na|포크와 나이프를 가져오세요
+فِنْجَان|fen-GAAN|펜간|커피잔, 찻잔|Cup, Coffee cup|fen-GAAN 'AH-wa maz-BOOT|설탕 알맞은 커피 한 잔
+شَفْشَق|SHA-fa-sha'|샤파샤으|물병, 주전자 피처|Pitcher, Jug|SHA-fa-sha' MAY-ya SA'-'a|시원한 물 한 피처
+سُلْطَانِيَّة|sol-ta-NEY-ya|솔타니야|대접, 국그릇, 볼|Soup bowl, Deep bowl|sol-ta-NEY-yit SHOOR-ba ka-BEE-ra|수프용 큰 대접
+بَرَّاد|bar-RAAD|바르라드|주전자, 차 우림 주전자|Teapot, Kettle|bar-RAAD SHAAY sa-'EE-di|진한 상이집트식 차 주전자
+فُوطِة سُفْرَة|FOO-tit SOF-ra|푸팃 소프라|식탁 냅킨, 테이블 냅킨|Table napkin|FOO-tit SOF-ra ni-DEE-fa|깨끗한 식탁 냅킨
+مَلَّاحَة|mal-LAA-ha|말라하|소금통|Salt shaker|FEEN il-mal-LAA-ha 'alat-ta-ra-BEE-za?|식탁 위에 소금통이 어디 있나요?
+طَفَّايَة|taf-FAY-ya|탓파이야|재떨이|Ashtray|taf-FAY-yit sa-GA-yer|담배 재떨이
+طَقْم مَوَاعِين|TA'M ma-wa-'EEN|타으임 마와인|식기 세트, 냄비 세트|Cookware set, Dish set|ish-TA-rat TA'M ma-wa-'EEN ga-DEED|새 식기 세트를 구입했어요
+وَاعِد / يِوَاعِد|WAA-'ed / yi-WAA-'ed|와이드 / 이와이드|약속하다, 만나기로 하다|Promise, Make appointment|wa-'ED-toh a-'AB-loh BUK-ra|내일 그를 만나기로 약속했어요
+أَكِّد / يِأَكِّد|AK-ked / yi-AK-ked|악키드 / 이악키드|확인하다, 확정하다|Confirm, Assure|AK-ked 'a-LAY-ya bil-mee-'AAD|시간을 저에게 다시 확인해 주세요
+فَكَّر / يِفَكَّر|fak-kar / yi-FAK-kar|팍카르 / 이팍카르|생각하다, 상기시키다|Think, Remind|fak-KAR-ni bil-mow-DOO' da|그 일 나한테 꼭 일깨워 줘
+شَال / يِشِيل|SHAAL / yi-SHEEL|샬 / 이실|들다, 운반하다, 치우다, 보관하다|Carry, Remove, Keep|SHEEL ish-SHAN-ta 'AN-ni|가방 좀 대신 들어 줘
+حَطّ / يِحُطّ|HATT / yi-HOTT|핫 / 이홋|놓다, 두다, 넣다|Put, Place|HOTT il-ma-fa-TEEH he-NA|열쇠를 여기에 두세요
+شَارِك / يِشَارِك|SHA-rek / yi-SHA-rek|샤렉 / 이샤렉|참여하다, 공유하다|Participate, Share|SHA-rek ma-'AA-na fil-HAF-la|파티에 우리와 함께 참여하세요
+وَفَّر / يِوَفَّر|waf-far / yi-WAF-far|와프파르 / 이와프파르|절약하다, 아끼다, 마련하다|Save, Economize, Provide|WAF-far flu-SAK lish-SHE-ta|겨울을 위해 돈을 아끼세요
+صَرَف / يِصْرِف|SA-raf / YIS-ref|사라프 / 이스레프|돈을 쓰다, 소비하다|Spend (money)|sa-RAFT fu-LOOS ka-TEE-ra in-na-HAR-da|오늘 돈을 많이 썼어요
+نَقَل / يِنْقُل|NA-'al / YIN-'ol|나알 / 인올|옮기다, 이사하다|Move, Transfer|na-'AL-na fee SHA'-'a ga-DEE-da|우리는 새 아파트로 이사했어요
+تَابِع / يِتَابِع|TAA-be' / yi-TAA-be'|타베으 / 이타베으|지켜보다, 팔로우하다, 추적하다|Follow, Track|TAA-be' it-TA-lab 'alan-NETT|인터넷으로 주문 상태를 추적하세요
+حَلَق|HA-la'|할라으|귀걸이, 링|Earring, Ring|HA-la' DAH-hab 'a-YAAR WA-hed wa-'esh-REEN|21K 금 귀걸이
+سِلْسِلَة|sel-SE-la|셀셀라|목걸이, 체인|Necklace, Chain|sel-SE-la FED-da SHEEK|세련된 은 목걸이
+إِسْوِرَة|es-WE-ra|에스웨라|팔찌, 뱅글|Bracelet, Bangle|es-WE-rit DAH-hab lil-'a-ROO-sa|신부를 위한 금팔찌
+خَاتِم|KHA-tem|카템|반지, 가락지|Ring|KHA-tem al-MAAZ HILW|예쁜 다이아몬드 반지
+أَلْمَاظ|al-MAAZ|알마즈|다이아몬드, 금강석|Diamond|FASS al-MAAZ AS-li|진품 다이아몬드 알
+عُقْد لُولِي|'A'D LOO-li|아으드 룰리|진주 목걸이|Pearl necklace|'A'D LOO-li ta-BEE-'i|천연 진주 목걸이
+دِبْلَة|DEB-la|데블라|결혼반지, 약혼반지|Wedding band, Engagement ring|DEB-lit kho-TOO-ba|약혼 반지
+عِيَار|'a-YAAR|아야르|금의 순도, 캐럿 (18K, 21K, 24K)|Karat, Caliber|DAH-hab 'a-YAAR ta-man-TAA-shar|18K 금
+مَصْنَعِيَّة|mas-na-'EY-ya|마스나이야|세공비, 가공 수수료|Workmanship fee, Making charge|il-mas-na-'EY-ya KAAM 'alal-ge-RAAM?|그램당 세공비가 얼마인가요?
+صَاغَة|SAA-gha|사가|금은방 골목, 귀금속 시장|Gold souk, Goldsmiths|ray-HEEN nish-TA-ri min es-SAA-gha|금은방 골목에 사러 가요
+رَبِّنَا يِخَلِّيهُم|rab-be-NA yi-khal-LEE-hom|랍베나 이칼리훔|자녀들이 무탈히 잘 자라길 (아이 축복)|May God protect and keep them (blessing for children)|ma sha ALLAH, rab-be-NA yi-khal-LEE-hom lak|정말 귀엽네요, 아이들이 건강히 잘 자라길 바랍니다
+فِي رِعَايِة الله|fee re-'AA-yit al-LAAH|피 리아이릿 알라|하느님의 보살핌 속에 평안히 (작별 축원)|In God's care, Safe journey|ma-'as-sa-LAA-ma, fee re-'AA-yit al-LAAH|안녕히 가세요, 신의 보살핌 속에 늘 평안하시길
+أَفْرَاح دَايْمًا|af-RAAH DAY-man|아프라흐 다이만|늘 집안에 기쁜 일만 가득하길 (경사 축하)|May joy always fill your home|mab-ROOK il-FA-rah, af-RAAH DAY-man|결혼 축하해요, 늘 기쁜 일만 넘치길 바랍니다
+عُقْبَال عِنْدَك|'o'-BAAL 'EN-dak|오으발 엔다크|다음엔 당신에게도 이런 좋은 일이 있기를!|May you have the same good fortune soon!|NIF-rah beek 'a-REEB — 'o'-BAAL 'EN-dak!|당신도 곧 좋은 짝 만나길 바라요 — 당신에게도 좋은 소식이 있기를!
+نَوَّرْت الدِّنْيَا|naw-WART id-DEN-ya|나우와르트 이드덴야|세상을 환하게 밝혔군요|You lit up the world (birth congratulations)|mab-ROOK il-mow-LOOD, naw-WART id-DEN-ya|아기 탄생을 축하해요, 온 세상을 환하게 비췄네요!
+حَمْدِلله عَالسَّلَامَة|HAM-dil-LAAH 'alas-sa-LAA-ma|함딜라 알라스살라마|무사히 잘 돌아오셨어요, 무사해서 다행입니다|Welcome back safely / Thank God for safety|HAM-dil-LAAH 'alas-sa-LAA-ma min es-SA-far|여행 마치고 무사히 오셔서 참 다행이에요
+الله يِسَلِّمَك|al-LAAH yi-SAL-li-mak|알라 이살리마크|무사 귀환 덕담에 대한 화답 (신께서 당신을 지켜주시길)|May God keep you safe (reply to welcome back)|al-LAAH yi-SAL-li-mak ya ha-BEE-bi|반겨주셔서 고마워요, 복 받으세요
+كَتَّر خِيرَك|kat-TAR KHEE-rak|캇타르 키라크|은혜를 많이 베풀어 주셔서 감사합니다|May God increase your goodness, Thank you deeply|kat-TAR KHEE-rak 'alal-mo-SAA-'a-da|도와주셔서 정말 진심으로 감사드립니다
+فِي حِمَى الرَّحْمَن|fee HE-mar-rah-MAAN|피 헤마르라흐만|자비로우신 신의 품 안에서 평안히|Under the protection of the Merciful|NAAM fee HE-mar-rah-MAAN|신의 보살핌 속에 편안히 잠드세요
+مَسَاء الوَرْد|ma-SA-il-WARD|마사일와르드|장미꽃처럼 향기로운 저녁 되세요! (우아한 저녁 인사)|Evening of roses!|ma-SA-il-WARD wal-yas-MEEN 'a-LEE-ku|여러분 모두 장미꽃처럼 향기롭고 평온한 저녁 보내세요!`,
+20:`
+كَرْكَدِيه|kar-ka-DEH|카르카데|히비스커스 차|Hibiscus tea|'AA-yiz kub-BAA-yit kar-ka-DEH SAA-'e'|시원한 아이스 히비스커스 차 한 잔 주세요
+يَانْسُون|yan-SOON|얀순|아니스 차 (소화·감기용)|Anise tea|ISH-rab yan-SOON DAA-fi liz-ZOOR|목이 아플 땐 따뜻한 아니스 차를 마시세요
+حِلْبَة|HEL-ba|헬바|페누그릭 차, 호로파 차|Fenugreek tea|HEL-ba bil-'A-sal il-ES-wed|사탕수수 당밀을 넣은 페누그릭 차
+سَحْلَب|SAH-lab|사흘라브|살렙 (겨울철 따뜻한 우유 음료)|Sahlab, Warm milk drink|SAH-lab bil-mo-kas-sa-RAAT fish-SHE-ta|겨울에 견과류를 올린 따뜻한 살렙 한 잔
+كُنَافَة|ko-NAA-fa|코나파|쿠나파 (시럽을 뿌린 치즈·크림 페이스트리)|Kunafa, Sweet pastry|ko-NAA-fa bil-MAN-ga wil-ke-REE-ma|망고와 생크림을 올린 쿠나파
+بَسْبُوسَة|bas-BOO-sa|바스부사|바스부사 (세몰리나 시럽 케이크)|Basbousa, Semolina cake|bas-BOO-sa bil-BON-do' TAA-za|헤이즐넛이 올라간 갓 구운 바스부사
+أُمّ عَلِي|omm 'A-li|옴 알리|움 알리 (이집트식 따뜻한 브레드 푸딩)|Om Ali, Egyptian bread pudding|TAA-gen omm 'A-li SOKHN|따끈한 뚝배기 움 알리 디저트
+زِيَادَة|ze-YAA-da|지야다|설탕 많이 (커피 주문), 추가|Extra sweet (coffee), Extra|'AH-wa TOR-ki ze-YAA-da low sa-MAHT|달달한 터키식 커피 한 잔 주세요
+مَظْبُوط|maz-BOOT|마즈부트|설탕 보통 (적당한 당도), 딱 맞는|Medium sweet, Exact|HAAT li fen-GAAN 'AH-wa maz-BOOT|설탕 보통으로 커피 한 잔 갖다주세요
+سَادَة|SAA-da|사다|설탕 없이 (무가당 블랙), 무늬 없는|Plain, Without sugar|ba-HEBB il-'AH-wa is-SAA-da|저는 설탕 없는 블랙커피를 좋아해요
+صُورَة|SOO-ra|수라|사진, 그림, 이미지|Photo, Picture|MUM-kin NAA-khod SOO-ra ma-'a BA'D?|우리 같이 사진 한 장 찍을까요?
+فِيدْيُو|VED-yo|비드요|동영상, 비디오|Video|saw-WART VED-yo lin-NEEL|나일강 풍경을 동영상으로 찍었어요
+سِيلْفِي|SEL-fi|셀피|셀카, 셀피|Selfie|ta-'AA-la nit-SAW-war SEL-fi|이리 와서 같이 셀카 찍자
+بُوسْت|BOST|보스트|게시물, 포스팅|Social media post|naz-ZALT BOST ga-DEED 'alal-FEES|페이스북에 새 게시물을 올렸어요
+لَايْك|LAYK|라이크|좋아요 (추천 버튼)|Like (social media)|I'-mil LAYK wa-SHEER lil-VED-yo|영상에 좋아요와 공유 부탁드려요
+تَعْلِيق|ta'-LEE'|타으리으|댓글, 코멘트, 논평|Comment|OK-tob ta'-LEE' HILW|예쁜 댓글을 남겨 보세요
+حِسَاب|he-SAAB|헤사브|계정, 프로필, 계산서|Account, Bill|ISM he-SAA-bak EH 'ala i-NIS-ta?|인스타그램 계정 이름이 뭐예요?
+رَابِط|RAA-bet|라베트|링크, 연결 고리|Link, URL|eb-'AT li ir-RAA-bet 'alal-WATS|왓츠앱으로 링크 좀 보내 주세요
+إِشْعَار|esh-'AAR|에쉬아르|알림, 푸시 알림|Notification, Alert|wa-SAL-ni esh-'AAR ga-DEED|새 알림이 하나 도착했어요
+خَاصّ|KHAASS|카스|개인 메시지(DM), 비공개의, 전용의|Private, DM, Special|ba-'at-TE-lak re-SAA-la 'alal-KHAASS|개인 메시지(DM)로 연락 보냈어요
+حَفَظ / يِحْفَظ|HA-faz / YIH-faz|하파즈 / 이흐파즈|외우다, 암기하다, 저장하다|Memorize, Save|ha-FAZT kham-SEEN KEL-ma in-na-HAR-da|오늘 단어 50개를 외웠어요
+رَاجِع / يِرَاجِع|RAA-ge' / yi-RAA-ge'|라게으 / 이라게으|복습하다, 검토하다|Review, Revise|LAA-zim a-RAA-ge' id-DARS bil-LEEL|밤에 수업을 복습해야 해요
+جَرَّب / يِجَرَّب|gar-rab / yi-GAR-rab|가르랍 / 이가르랍|시도하다, 먹어 입어 보다|Try, Test|GAR-rab il-KO-sha-ri, TA'-moh TOH-fa|코샤리 한번 드셔 보세요, 맛이 일품이에요
+اِتْعَوِّد / يِتْعَوِّد|it-'aw-wed / yit-'AW-wed|잇아우웨드 / 잇아우웨드|익숙해지다, 습관이 들다|Get used to|it-'aw-WEDT 'alal-GAWW fee MISR|이집트 날씨에 이제 익숙해졌어요
+اِتَّصَل / يِتِّصِل|it-TA-sal / yit-TE-sel|잇타살 / 잇테셀|전화하다, 연락하다|Call, Contact|hat-TE-sel beek AW-wel ma OW-sal|도착하자마자 바로 전화할게요
+اِخْتَار / يِخْتَار|ikh-TAAR / yikh-TAAR|이크타르 / 이크타르|고르다, 선택하다|Choose, Select|ikh-TAAR il-LOWN il-li yi'-GE-bak|마음에 드는 색깔을 고르세요
+حَاوِل / يِحَاوِل|HAA-wel / yi-HAA-wel|하웰 / 이하웰|노력하다, 애쓰다|Try, Attempt|HAA-wel tit-KAL-lem 'A-ra-bi kull YOM|매일 아랍어로 말하려고 노력해 보세요
+اِشْتَغَل / يِشْتَغَل|ish-TA-ghal / yish-TA-ghal|이쉬타갈 / 이쉬타갈|일하다, 작동하다|Work, Function|it-tak-YEEF mish shagh-GHAAL, 'AA-yiz yish-TA-ghal|에어컨이 고장이라 작동해야 해요
+بَدَأ / يِبْدَأ|BA-da' / YIB-da'|바다아 / 이브다아|시작하다|Start, Begin|il-ber-NAA-mag ha-YIB-da' is-SAA-'a ta-MAN-ya|일정이 8시에 시작할 거예요
+خَلَّص / يِخَلَّص|khal-las / yi-KHAL-las|칼라스 / 이칼라스|끝내다, 마치다|Finish, Complete|khal-LAST ish-SHOGHL BAD-ri in-na-HAR-da|오늘 일을 일찍 마쳤어요
+صَاحِب|SAA-heb|사헵|친구, 주인, 소유자|Friend, Owner|da SAH-bi min ay-YAAM ig-GAM-'a|이분은 대학 시절부터 제 친구예요
+زِمِيل|ze-MEEL|제밀|직장 동료, 학우|Colleague, Classmate|ze-MEE-li fish-SHOGHL sa-'ED-ni|직장 동료가 저를 도와주었어요
+جَار|GAAR|가르|이웃, 이웃집 사람|Neighbor|GAR-na RAA-gel TAY-yeb GID-dan|우리 이웃집 아저씨는 정말 친절해요
+ضِيف|DEEF|디프|손님, 방문객|Guest, Visitor|'an-DE-na do-YOOF in-na-HAR-da bil-LEEL|오늘 밤 우리 집에 손님들이 오셔요
+مَعْرِفَة|ma'-RE-fa|마으레파|아는 사이, 지인, 지식|Acquaintance, Knowledge|FOR-sa sa-'EE-da wa-ma'-RE-fit KHEER|만나서 반갑고 좋은 인연이 되었네요
+حَبِيب|ha-BEEB|하비브|사랑하는 사람, 친애하는 친구|Beloved, Dear friend|iz-ZAY-yak ya ha-BEE-bi?|우리 친한 친구, 잘 지냈어?
+عَرِيس|'a-REES|아리스|신랑|Groom|mab-ROOK lil-'a-REES wil-'a-ROO-sa!|신랑 신부 결혼을 축하합니다!
+عَرُوسَة|'a-ROO-sa|아루사|신부, 인형|Bride, Doll|il-'a-ROO-sa shak-LA-ha 'A-mar in-na-HAR-da|신부가 오늘 달처럼 정말 아름답네요
+مُدِير|mo-DEER|모디르|매니저, 사장, 관리자|Manager, Director|'AA-yiz a-'AA-bel mo-DEER il-FON-do'|호텔 매니저님을 뵙고 싶습니다
+زُبُون|za-BOON|자분|단골, 손님, 고객|Customer, Client|A-na za-BOON 'a-DEEM 'an-DO-ku|저 여기 오래된 단골손님이에요
+أَلْف مَبْرُوك|ALF mab-ROOK|알프 마브루크|진심으로 축하해요! (천 번 축하)|Huge congratulations!|ALF mab-ROOK 'alan-na-GAAH!|성공을 진심으로 축하드립니다!
+عَاش يَا بَطَل|'AASH ya BA-tal|아쉬 야 바탈|역시 최고야!, 잘했어 영웅!|Way to go, champ!|'AASH ya BA-tal, KAM-mel KI-da!|잘했어 최고야, 이대로 계속 밀고 나가자!
+بْرَافُو عَلِيك|be-RAA-vo 'a-LEEK|브라보 알리크|정말 잘했어요!, 브라보!|Bravo!, Well done!|be-RAA-vo 'a-LEEK, 'a-ra-bey-YE-tak BA-'et HIL-wa|정말 잘하셨어요, 아랍어 실력이 부쩍 늘었네요
+مِيَّة مِيَّة|MEY-ya MEY-ya|미야 미야|백점 만점!, 완벽해요!|100%, Perfect!|kull it-tar-tee-BAAT MEY-ya MEY-ya|모든 준비가 백점 만점으로 완벽합니다
+تِسْتَاهِل كُلّ خِير|tis-TAA-hel kull KHEER|티스타헬 쿨 키르|모든 복을 받을 자격이 있어요|You deserve all the best|IN-ta RAA-gel TAY-yeb wa-tis-TAA-hel kull KHEER|당신은 참 좋은 분이라 모든 복을 받을 자격이 있어요
+مَافِيش مُشْكِلَة|ma-FEESH mosh-KE-la|마피쉬 모쉬켈라|문제없어요, 괜찮아요|No problem, It's fine|'ala RAA-si, ma-FEESH mosh-KE-la KHA-lis|기꺼이 해드리죠, 전혀 문제없어요
+بِالتَّوْفِيق|bit-taw-FEE'|빗타우피으|행운을 빌어요, 건투를 빕니다|Good luck, Best wishes|bit-taw-FEE' fish-SHOGHL ig-ga-DEED|새 직장에서 모든 일이 잘 풀리길 빌어요
+خَلِّي بَالَك مِنْ نَفْسَك|KHAL-li BAA-lak min NAF-sak|칼리 발라크 민 나프사크|몸조심해요, 건강 잘 챙기세요|Take care of yourself|id-DEN-ya BARD, KHAL-li BAA-lak min NAF-sak|날씨가 쌀쌀하니 몸조심하세요
+نَوَّرْت مَصْر|naw-WART MISR|나우와르트 미스르|이집트에 오신 걸 환영해요|Welcome to Egypt|naw-WART MISR ya os-TAAZ!|선생님, 이집트에 오신 걸 진심으로 환영합니다!
+وَاحِد وَاحِد، أَلْف كِلْمَة!|WAA-hed WAA-hed, ALF KEL-ma!|와헤드 와헤드, 알프 켈마!|하나씩 하나씩, 드디어 1,000단어!|One by one, a thousand words!|mab-ROOK! ha-FAZ-na ALF KEL-ma MAS-ri!|축하해요! 드디어 이집트 암미야 1,000단어를 달성했습니다!`
+};
+
+const WORDS=[]; const BYID={};
+const DAYS=Object.keys(RAW).map(Number);
+for(const d of DAYS){
+  RAW[d].trim().split('\n').forEach((line,i)=>{
+    const [ar,rom,kp,ko,en,exR,exK]=line.split('|').map(s=>s.trim());
+    const w={id:(d-1)*50+i+1,day:d,unit:Math.floor(i/10)+1,ar,rom,kp,ko,en,exR,exK};
+    WORDS.push(w); BYID[w.id]=w;
+  });
+}
+
+const STAGES=[
+  {name:'카드 학습',icon:'📜',desc:'카드를 뒤집어 뜻·발음·예문 익히기'},
+  {name:'뜻 고르기',icon:'🔤',desc:'아랍어를 보고 한국어 뜻 고르기'},
+  {name:'발음 고르기',icon:'🗣️',desc:'아랍어 글자를 보고 읽는 법 고르기'},
+  {name:'아랍어 고르기',icon:'✍️',desc:'뜻을 보고 알맞은 아랍어 고르기'},
+  {name:'짝맞추기',icon:'🧩',desc:'아랍어와 뜻을 빠르게 연결하기'},
+  {name:'타임어택',icon:'⏱️',desc:'60초 동안 최대한 많이 맞히기'}
+];
+
+/* storage */
+const SKEY='ammiya200-v1';
+let store={stars:{},wrong:{},best:{},day:1};
+try{const s=JSON.parse(localStorage.getItem(SKEY)||'null'); if(s&&s.stars)store=Object.assign(store,s);}catch(e){}
+function save(){try{localStorage.setItem(SKEY,JSON.stringify(store))}catch(e){}}
+const getStars=k=>store.stars[k]||[0,0,0,0,0,0];
+function setStar(k,i,s){const a=getStars(k).slice(); if(s>a[i])a[i]=s; store.stars[k]=a; save();}
+const unlocked=(k,i)=>i===0||getStars(k)[i-1]>0;
+function addWrong(id){store.wrong[id]=(store.wrong[id]||0)+1; save();}
+function fixWrong(id){if(store.wrong[id]){store.wrong[id]--; if(store.wrong[id]<=0)delete store.wrong[id]; save();}}
+
+/* helpers */
+const $app=document.getElementById('app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const unitWords=(d,u)=>WORDS.filter(w=>w.day===d&&w.unit===u);
+const starStr=n=>'★'.repeat(n)+'☆'.repeat(3-n);
+let timers=[], keyHandler=null;
+document.addEventListener('keydown',e=>{if(keyHandler)keyHandler(e)});
+function go(fn){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[];keyHandler=null;try{speechSynthesis.cancel()}catch(e){} fn(); window.scrollTo(0,0);}
+const later=(fn,ms)=>timers.push(setTimeout(fn,ms));
+
+/* speech */
+const canSpeak='speechSynthesis' in window;
+let arVoice=null, arVoices=[];
+const isEG=v=>/ar[-_]EG/i.test(v.lang)||/egypt|مصر|salma|shakir/i.test(v.name);
+function pickVoice(){try{
+  arVoices=speechSynthesis.getVoices().filter(v=>/^ar/i.test(v.lang));
+  const natural=v=>/natural|online|neural/i.test(v.name)?1:0;
+  arVoice=arVoices.find(v=>v.voiceURI===store.voice)
+    ||arVoices.filter(isEG).sort((a,b)=>natural(b)-natural(a))[0]
+    ||arVoices[0]||null;
+  if(document.getElementById('voicebox'))renderVoiceBox();
+}catch(e){}}
+if(canSpeak){pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,800);}
+// 이집트식으로 읽히도록 글자 치환: ق → 끊어 읽기(ء), ث → ت, ذ → د
+function egyptize(t){
+  return t.replace(/\s*\/\s*/g,'، ').replace(/ق/g,'ء').replace(/ث/g,'ت').replace(/ذ/g,'د');
+}
+function speak(text){
+  if(!canSpeak)return;
+  try{const u=new SpeechSynthesisUtterance(egyptize(text));u.lang=arVoice?arVoice.lang:'ar-EG';if(arVoice)u.voice=arVoice;u.rate=store.rate||.8;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}
+}
+function renderVoiceBox(){
+  const box=document.getElementById('voicebox'); if(!box)return;
+  if(!canSpeak){box.innerHTML='<h3 class="serif">발음 음성</h3><p class="vnote">이 브라우저는 음성 재생을 지원하지 않아요.</p>';return;}
+  const eg=arVoices.filter(isEG), usingEG=arVoice&&isEG(arVoice);
+  const status=!arVoices.length?'이 기기에서 아랍어 음성을 찾지 못했어요.':usingEG?`이집트 음성으로 재생 중: ${arVoice.name}`:`이집트 음성이 없어 ${arVoice.name} 음성으로 재생해요.`;
+  box.innerHTML=`<h3 class="serif">발음 음성</h3>
+    <p class="vs ${usingEG?'ok':''}">${esc(status)}</p>
+    ${arVoices.length?`<div class="vrow"><select id="vsel" aria-label="음성 선택">${arVoices.map(v=>`<option value="${esc(v.voiceURI)}" ${arVoice&&v.voiceURI===arVoice.voiceURI?'selected':''}>${isEG(v)?'🇪🇬 ':''}${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select><button class="btn" id="vtest">들어 보기</button></div>
+    <label class="vrow">속도 <input type="range" id="vrate" min="0.5" max="1.1" step="0.05" value="${store.rate||0.8}"></label>`:''}
+    <p class="vnote">어떤 음성이든 ق는 이집트식 끊어 읽기(')로, ث는 ‘ㅌ’으로 읽히도록 바꿔서 재생해요. ${usingEG?'ج도 이집트식 ‘ㄱ(g)’로 읽힙니다.':(eg.length?'목록에서 🇪🇬 표시된 음성을 고르면 ج도 ‘ㄱ(g)’로 읽혀요.':'ج를 ‘ㄱ(g)’로 읽는 건 이집트 음성에서만 가능해요. PC에서 Microsoft Edge 브라우저로 이 페이지를 열면 이집트 음성(Salma, Shakir)이 목록에 나타나요.')}</p>`;
+  const sel=document.getElementById('vsel');
+  if(sel)sel.onchange=()=>{store.voice=sel.value;save();arVoice=arVoices.find(v=>v.voiceURI===sel.value)||arVoice;renderVoiceBox();speak('أَهْلًا، إِزَّيَّك؟');};
+  const t=document.getElementById('vtest');
+  if(t)t.onclick=()=>speak('أَهْلًا، إِزَّيَّك؟ أَنَا كُوَيِّس. عَايِز قَهْوَة وِ مَيَّة.');
+  const r=document.getElementById('vrate');
+  if(r)r.oninput=()=>{store.rate=+r.value;save();};
+}
+const sayBtn=(w,label)=>canSpeak?`<button class="say" data-say="${w.id}" aria-label="발음 듣기">${label||'🔊'}</button>`:'';
+$app.addEventListener('click',e=>{const b=e.target.closest('[data-say]'); if(b){e.stopPropagation(); speak(BYID[b.dataset.say].ar);}});
+
+/* ---------- HOME ---------- */
+let curDay=store.day||1, resetArmed=false;
+function renderHome(){
+  let total=0, doneUnits=0;
+  for(const d of DAYS)for(let u=1;u<=5;u++){const s=getStars(`${d}-${u}`);total+=s.reduce((a,b)=>a+b,0);if(s.every(x=>x>0))doneUnits++;}
+  const wrongN=Object.keys(store.wrong).length;
+  let h=`<section class="hero">
+    <h1 class="serif">암미야 1000<span class="ar">عامية</span></h1>
+    <p>이집트 방언 실생활 단어 1,000개(Day 1–20)를 단원마다 6단계 게임으로 외워요. 앞 단계에서 별을 1개 이상 받으면 다음 단계가 열립니다.</p>
+    <div class="meter">
+      <div><b>${total}</b><span>/ ${DAYS.length*90} 별</span></div>
+      <div><b>${doneUnits}</b><span>/ ${DAYS.length*5} 단원 완주</span></div>
+      <div><b>${wrongN}</b><span>복습할 단어</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="rv" ${wrongN?'':'disabled'}>틀린 단어 복습하기</button>
+      <button class="btn" id="mix">전체 랜덤 20문제</button>
+    </div>
+  </section>
+  <nav class="tabs" aria-label="Day 선택">${DAYS.map(d=>{let s=0;for(let u=1;u<=5;u++)s+=getStars(`${d}-${u}`).reduce((a,b)=>a+b,0);return `<button class="tab ${d===curDay?'on':''} ${s>=90?'full':''}" data-day="${d}" aria-pressed="${d===curDay}" title="${(d-1)*50+1}–${d*50}번">Day ${d}<small>${s?'★ '+s:(d-1)*50+1+'–'}</small></button>`}).join('')}</nav>
+  <p class="dayinfo">Day ${curDay}: ${(curDay-1)*50+1}–${curDay*50}번</p>
+  <div class="units">`;
+  for(let u=1;u<=5;u++){
+    const k=`${curDay}-${u}`, st=getStars(k), s=st.reduce((a,b)=>a+b,0), ws=unitWords(curDay,u), done=st.every(x=>x>0);
+    h+=`<button class="unit" data-unit="${u}">
+      <span class="u-no ${done?'done':''}">${done?'✓':u}</span>
+      <span class="u-title serif">${SECTIONS[curDay][u-1]}</span>
+      <span class="u-stars"><b>★ ${s}</b>/ 18<span class="dots">${st.map(x=>`<i class="d${x}"></i>`).join('')}</span></span>
+      <span class="u-sub"><span>${ws[0].id}–${ws[9].id}번</span><span class="ar">${esc(ws[0].ar)}</span><span class="ar">${esc(ws[1].ar)}</span></span>
+    </button>`;
+  }
+  h+=`</div>
+  <footer>
+    <div id="voicebox" class="voicebox"></div>
+    <p>진행 상황은 이 브라우저에 저장됩니다. <button class="linkbtn" id="reset">${resetArmed?'한 번 더 누르면 모든 기록이 지워져요':'기록 초기화'}</button></p>
+  </footer>`;
+  $app.innerHTML=h;
+  renderVoiceBox();
+  $app.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{curDay=+b.dataset.day;store.day=curDay;save();resetArmed=false;renderHome();});
+  $app.querySelectorAll('[data-unit]').forEach(b=>b.onclick=()=>go(()=>renderUnit(curDay,+b.dataset.unit)));
+  document.getElementById('rv').onclick=()=>go(startReview);
+  document.getElementById('mix').onclick=()=>go(startMix);
+  document.getElementById('reset').onclick=()=>{
+    if(!resetArmed){resetArmed=true;renderHome();return;}
+    store={stars:{},wrong:{},best:{}};save();resetArmed=false;renderHome();
+  };
+}
+
+/* ---------- UNIT ---------- */
+function renderUnit(d,u){
+  const k=`${d}-${u}`, ws=unitWords(d,u), st=getStars(k);
+  const best=store.best[k];
+  $app.innerHTML=`<div class="topbar"><button class="back" id="back">← Day ${d} 단원 목록</button></div>
+  <header class="unit-head"><p>Day ${d}, ${u}단원 (${ws[0].id}–${ws[9].id}번)</p><h2 class="serif">${SECTIONS[d][u-1]}</h2></header>
+  <ol class="path">${STAGES.map((s,i)=>{const lock=!unlocked(k,i);const sub=lock?'앞 단계에서 별 1개 이상 받으면 열려요':(i===5&&best?`${s.desc} (최고 ${best}개)`:s.desc);
+    return `<li><button class="stage ${lock?'locked':''} ${st[i]?'cleared':''}" data-stage="${i}" ${lock?'disabled':''}>
+      <span class="s-num" aria-hidden="true">${lock?'🔒':s.icon}</span>
+      <span class="s-txt"><b>${i+1}단계 ${s.name}</b><small>${sub}</small></span>
+      <span class="s-st" aria-label="별 ${st[i]}개">${starStr(st[i])}</span></button></li>`}).join('')}</ol>
+  <details class="wordlist"><summary>이 단원 단어 10개 미리 보기</summary>
+    ${ws.map(w=>`<div class="wr"><span class="wr-n">${w.id}</span><span><span class="ar wr-ar">${esc(w.ar)}</span><span class="wr-m">${esc(w.ko)}</span><span class="wr-p">${esc(w.rom)} / ${esc(w.kp)}</span></span>${sayBtn(w)}</div>`).join('')}
+  </details>`;
+  document.getElementById('back').onclick=()=>{curDay=d;go(renderHome);};
+  $app.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>go(()=>startStage(d,u,+b.dataset.stage)));
+}
+
+function startStage(d,u,i){
+  const ctx={d,u,key:`${d}-${u}`,words:unitWords(d,u),title:`${i+1}단계 ${STAGES[i].name}`,stage:i};
+  ctx.exit=()=>go(()=>renderUnit(d,u));
+  ctx.retry=()=>go(()=>startStage(d,u,i));
+  ctx.next=i<5?()=>go(()=>startStage(d,u,i+1)):null;
+  if(i===0)playCard(ctx);
+  else if(i===1)playQuiz(ctx,{type:'a2k',mode:'stage'});
+  else if(i===2)playQuiz(ctx,{type:'a2p',mode:'stage'});
+  else if(i===3)playQuiz(ctx,{type:'k2a',mode:'stage'});
+  else if(i===4)playMatch(ctx);
+  else playQuiz(ctx,{type:'mix',mode:'time'});
+}
+function startReview(){
+  const ids=Object.keys(store.wrong).sort((a,b)=>store.wrong[b]-store.wrong[a]).slice(0,20);
+  const ctx={words:ids.map(id=>BYID[id]),title:'틀린 단어 복습'};
+  ctx.exit=()=>go(renderHome); ctx.retry=Object.keys(store.wrong).length?()=>go(startReview):null;
+  playQuiz(ctx,{type:'mix',mode:'review'});
+}
+function startMix(){
+  const ctx={words:shuffle(WORDS).slice(0,20),title:'전체 랜덤 20문제'};
+  ctx.exit=()=>go(renderHome); ctx.retry=()=>go(startMix);
+  playQuiz(ctx,{type:'mix',mode:'free'});
+}
+
+function topbar(ctx,pct,count,time){
+  return `<div class="topbar"><button class="back" id="quit" aria-label="그만하기">✕</button>
+    <div class="prog ${time?'time':''}" id="pbar"><i style="width:${pct}%"></i></div><span class="count" id="pcount">${count}</span></div>
+    <div class="ptitle">${ctx.title}</div>`;
+}
+function bindQuit(ctx){document.getElementById('quit').onclick=ctx.exit;}
+
+/* ---------- STAGE 1: CARD ---------- */
+function playCard(ctx){
+  let q=shuffle(ctx.words), done=0; const n=q.length;
+  function draw(){
+    if(!q.length){setStar(ctx.key,0,3);return result(ctx,{stars:3,score:`${n}개 단어 학습 완료`,missed:[]});}
+    const w=q[0];
+    $app.innerHTML=topbar(ctx,done/n*100,`${done} / ${n}`)+`
+    <div class="flash" id="flash" role="button" tabindex="0" aria-label="카드 뒤집기"><div class="flash-in">
+      <div class="face front"><span class="ar big">${esc(w.ar)}</span><span class="hint">탭해서 뜻 보기</span></div>
+      <div class="face back"><span class="ar mid">${esc(w.ar)}</span>
+        <div class="pron">${esc(w.rom)}<span>${esc(w.kp)}</span></div>
+        <div class="mean">${esc(w.ko)}</div><div class="en">${esc(w.en)}</div>
+        <div class="ex"><div class="ex-r">${esc(w.exR)}</div><div class="ex-k">${esc(w.exK)}</div></div></div>
+    </div></div>
+    <div class="sayrow">${sayBtn(w,'🔊')}</div>
+    <div class="row2"><button class="btn" id="again">한 번 더 볼래요</button><button class="btn primary" id="ok">외웠어요</button></div>
+    <p class="kbd">스페이스: 뒤집기 · ←: 한 번 더 · →: 외웠어요</p>`;
+    bindQuit(ctx);
+    const f=document.getElementById('flash');
+    const flip=()=>f.classList.toggle('on');
+    f.onclick=flip;
+    const again=()=>{q.push(q.shift());draw();};
+    const ok=()=>{q.shift();done++;draw();};
+    document.getElementById('again').onclick=again;
+    document.getElementById('ok').onclick=ok;
+    keyHandler=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();flip();}else if(e.key==='ArrowLeft')again();else if(e.key==='ArrowRight')ok();};
+  }
+  draw();
+}
+
+/* ---------- QUIZ (stages 2-4, time attack, review, mix) ---------- */
+const val=(w,t)=>t==='a2k'?w.ko:t==='a2p'?w.rom:w.ar;
+function makeQ(w,t){
+  const pool=WORDS.filter(x=>x.day===w.day&&x.id!==w.id);
+  const seen=new Set([val(w,t)]), opts=[w];
+  for(const x of shuffle(pool)){if(opts.length>=4)break;const v=val(x,t);if(seen.has(v))continue;seen.add(v);opts.push(x);}
+  return {w,t,opts:shuffle(opts)};
+}
+function optHTML(x,t){
+  if(t==='a2k')return `<span>${esc(x.ko)}</span>`;
+  if(t==='a2p')return `<span>${esc(x.rom)}</span><small>${esc(x.kp)}</small>`;
+  return `<span class="ar">${esc(x.ar)}</span>`;
+}
+function promptHTML(q,answered){
+  const w=q.w;
+  if(q.t==='k2a')return `<p class="qlabel">이 뜻의 아랍어는?</p><div class="cartouche"><span class="ko">${esc(w.ko)}</span><span class="en">${esc(w.en)}</span></div>`;
+  const label=q.t==='a2k'?'이 단어의 뜻은?':'이 단어는 어떻게 읽을까요?';
+  const showSay=q.t==='a2k'||answered;
+  return `<p class="qlabel">${label}</p><div class="cartouche"><span class="ar">${esc(w.ar)}</span></div>${showSay?`<div class="sayrow">${sayBtn(w)}</div>`:''}`;
+}
+function playQuiz(ctx,opt){
+  const timeMode=opt.mode==='time';
+  const list=timeMode?null:shuffle(ctx.words);
+  let idx=0, score=0, answered=0, missed=[], lastId=null, ended=false;
+  const n=list?list.length:0;
+  const deadline=Date.now()+60000;
+  if(timeMode){
+    timers.push(setInterval(()=>{
+      const left=Math.max(0,deadline-Date.now());
+      const bar=document.querySelector('#pbar i'), c=document.getElementById('pcount');
+      if(bar)bar.style.width=(left/600)+'%';
+      if(c)c.textContent=Math.ceil(left/1000)+'초';
+      if(left<=0&&!ended){ended=true;finish();}
+    },100));
+  }
+  function nextWord(){
+    if(!timeMode)return list[idx];
+    let w; do{w=pick(ctx.words);}while(ctx.words.length>1&&w.id===lastId);
+    lastId=w.id; return w;
+  }
+  function draw(){
+    if(ended)return;
+    if(!timeMode&&idx>=n)return finish();
+    const w=nextWord();
+    const t=opt.type==='mix'?pick(['a2k','a2p','k2a']):opt.type;
+    const q=makeQ(w,t);
+    const count=timeMode?`${Math.ceil(Math.max(0,deadline-Date.now())/1000)}초`:`${idx+1} / ${n}`;
+    const pct=timeMode?Math.max(0,deadline-Date.now())/600:idx/n*100;
+    $app.innerHTML=topbar(ctx,pct,count,timeMode)+(timeMode?`<p class="qlabel">맞힌 개수 <b id="sc">${score}</b></p>`:'')+
+      `<div id="prompt">${promptHTML(q,false)}</div>
+      <div class="opts">${q.opts.map((x,i)=>`<button class="opt ${t==='k2a'?'aropt':''}" data-i="${i}"><span class="k">${i+1}</span>${optHTML(x,t)}</button>`).join('')}</div>
+      <div id="fb"></div>`;
+    bindQuit(ctx);
+    let locked=false;
+    const choose=i=>{
+      if(locked||ended)return; locked=true;
+      const chosen=q.opts[i], ok=chosen.id===w.id;
+      answered++;
+      $app.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(q.opts[j].id===w.id)b.classList.add('right');else if(j===i)b.classList.add('wrong');});
+      if(ok){score++; if(opt.mode==='review')fixWrong(w.id);}
+      else{addWrong(w.id); missed.push(w);}
+      if(q.t==='a2p')document.getElementById('prompt').innerHTML=promptHTML(q,true);
+      if(timeMode){const s=document.getElementById('sc');if(s)s.textContent=score;later(draw,ok?350:900);return;}
+      document.getElementById('fb').innerHTML=`<div class="reveal ${ok?'good':'bad'}" role="status">
+        <div class="rv-h">${ok?'정답이에요':'정답은 이거예요'}</div>
+        <div class="rv-w"><span class="ar">${esc(w.ar)}</span><b>${esc(w.rom)}</b> (${esc(w.kp)}) ${esc(w.ko)}</div>
+        <div class="rv-ex">${esc(w.exR)} / ${esc(w.exK)}</div></div>
+        ${ok?'':`<div class="nextrow"><button class="btn primary" id="nx">다음 문제</button></div>`}`;
+      const advance=()=>{idx++;draw();};
+      if(ok)later(advance,1000);
+      else{document.getElementById('nx').onclick=advance;document.getElementById('nx').focus();keyHandler=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();advance();}};}
+    };
+    $app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+    keyHandler=e=>{const k=+e.key;if(k>=1&&k<=4)choose(k-1);};
+  }
+  function finish(){
+    timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[];keyHandler=null;
+    if(timeMode){
+      const stars=score>=15?3:score>=10?2:score>=6?1:0;
+      if(ctx.key){setStar(ctx.key,5,stars); if(score>(store.best[ctx.key]||0)){store.best[ctx.key]=score;save();}}
+      return result(ctx,{stars,score:`60초 동안 ${score}개 정답 (시도 ${answered}번)`,missed,timeMsg:true});
+    }
+    const pct=score/n;
+    if(opt.mode==='stage'){
+      const stars=pct>=.9?3:pct>=.75?2:pct>=.6?1:0;
+      setStar(ctx.key,ctx.stage,stars);
+      return result(ctx,{stars,score:`${n}문제 중 ${score}개 정답`,missed});
+    }
+    return result(ctx,{stars:null,score:`${n}문제 중 ${score}개 정답`,missed,
+      msg:opt.mode==='review'?(Object.keys(store.wrong).length?`아직 ${Object.keys(store.wrong).length}개 단어가 복습 목록에 남아 있어요. 맞힐수록 목록에서 빠집니다.`:'복습 목록을 모두 비웠어요!'):null});
+  }
+  draw();
+}
+
+/* ---------- STAGE 5: MATCH ---------- */
+function playMatch(ctx){
+  const ws=shuffle(ctx.words), chunks=[];
+  for(let i=0;i<ws.length;i+=5)chunks.push(ws.slice(i,i+5));
+  let round=0, mistakes=0;
+  function draw(){
+    const c=chunks[round], L=shuffle(c), R=shuffle(c);
+    let selL=null, selR=null, matched=0, busy=false;
+    $app.innerHTML=topbar(ctx,round/chunks.length*100,`${round+1} / ${chunks.length}판`)+
+      `<p class="qlabel">아랍어와 뜻이 맞는 짝을 차례로 누르세요 (실수 ${mistakes}번)</p>
+      <div class="mgrid"><div class="mcol">${L.map(w=>`<button class="mi" data-l="${w.id}"><span class="ar">${esc(w.ar)}</span></button>`).join('')}</div>
+      <div class="mcol">${R.map(w=>`<button class="mi" data-r="${w.id}">${esc(w.ko)}</button>`).join('')}</div></div>`;
+    bindQuit(ctx);
+    const check=()=>{
+      if(!selL||!selR)return;
+      const a=selL,b=selR; selL=selR=null;
+      if(a.dataset.l===b.dataset.r){
+        speak(BYID[a.dataset.l].ar);
+        [a,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok');x.disabled=true;});
+        if(++matched===c.length){round++; later(()=>round>=chunks.length?finish():draw(),500);}
+      }else{
+        mistakes++; busy=true;
+        document.querySelector('.qlabel').textContent=`아랍어와 뜻이 맞는 짝을 차례로 누르세요 (실수 ${mistakes}번)`;
+        [a,b].forEach(x=>{x.classList.remove('sel');x.classList.add('no');});
+        later(()=>{[a,b].forEach(x=>x.classList.remove('no'));busy=false;},450);
+      }
+    };
+    $app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{if(busy)return;if(selL)selL.classList.remove('sel');selL=b;b.classList.add('sel');check();});
+    $app.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{if(busy)return;if(selR)selR.classList.remove('sel');selR=b;b.classList.add('sel');check();});
+  }
+  function finish(){
+    const stars=mistakes<=1?3:mistakes<=4?2:1;
+    setStar(ctx.key,4,stars);
+    result(ctx,{stars,score:`10쌍 완성, 실수 ${mistakes}번`,missed:[]});
+  }
+  draw();
+}
+
+/* ---------- RESULT ---------- */
+const MSG=['조금만 더! 60% 이상 맞히면 다음 단계가 열려요.','통과! 틀린 단어만 한 번 더 보고 가요.','쿠와이이스 아위! 아주 잘했어요.','마브루크! 완벽해요.'];
+const TMSG=['6개 이상 맞히면 별을 받아요. 카드로 한 번 더 훑고 도전해 보세요.','좋은 출발! 10개를 넘기면 별 2개예요.','빨라요! 15개를 넘기면 별 3개예요.','이 단원은 완전히 내 것이 됐어요.'];
+function result(ctx,r){
+  keyHandler=null;
+  const uniq=[...new Map(r.missed.map(w=>[w.id,w])).values()];
+  const msg=r.msg||(r.stars==null?'틀린 단어는 자동으로 복습 목록에 들어가요.':(r.timeMsg?TMSG:MSG)[r.stars]);
+  const canNext=ctx.next&&r.stars>0;
+  $app.innerHTML=`<div class="topbar"><button class="back" id="quit">← ${ctx.key?'단원으로':'처음으로'}</button></div>
+  <section class="result" aria-live="polite">
+    <h2 class="r-title serif">${ctx.title}</h2>
+    ${r.stars!=null?`<div class="r-stars" aria-label="별 ${r.stars}개">${[1,2,3].map(i=>`<span class="${i<=r.stars?'on':''}">★</span>`).join('')}</div>`:''}
+    <div class="r-score">${r.score}</div>
+    <p class="r-msg">${msg}</p>
+    <div class="r-btns">
+      ${ctx.retry?`<button class="btn" id="retry">다시 하기</button>`:''}
+      ${canNext?`<button class="btn gold" id="next">${ctx.stage+2}단계 ${STAGES[ctx.stage+1].name} 시작</button>`:''}
+      ${!canNext&&ctx.key?`<button class="btn primary" id="unit">단원으로</button>`:''}
+    </div>
+    ${uniq.length?`<div class="missed"><h4>틀린 단어 ${uniq.length}개</h4>${uniq.map(w=>`<div class="wr"><span class="wr-n">${w.id}</span><span><span class="ar wr-ar">${esc(w.ar)}</span><span class="wr-m">${esc(w.ko)}</span><span class="wr-p">${esc(w.rom)} / ${esc(w.kp)}</span></span>${sayBtn(w)}</div>`).join('')}</div>`:''}
+  </section>`;
+  document.getElementById('quit').onclick=ctx.exit;
+  const rt=document.getElementById('retry'); if(rt)rt.onclick=ctx.retry;
+  const nx=document.getElementById('next'); if(nx)nx.onclick=ctx.next;
+  const un=document.getElementById('unit'); if(un)un.onclick=ctx.exit;
+}
+
+renderHome();
+</script>
+</body>
+</html>
